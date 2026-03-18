@@ -1,7 +1,3 @@
-// ============================================================
-// PRATISIG CONSULTING SERVICE - Prisma Schema
-// ============================================================
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,9 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================================
-// AUTHENTIFICATION & UTILISATEURS
-// ============================================================
+// ─── ENUMS ──────────────────────────────────────────────────────────────────
 
 enum Role {
   SUPER_ADMIN
@@ -25,89 +19,56 @@ enum Role {
   PROPRIETAIRE
   LIVREUR
   CLIENT
-  PUBLIC
 }
 
 enum UserStatus {
   ACTIVE
-  INACTIVE
   PENDING
   BANNED
+  SUSPENDED
 }
 
-model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String     @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  phone         String?
-  role          Role       @default(CLIENT)
-  status        UserStatus @default(PENDING)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  // Relations Auth.js
-  accounts      Account[]
-  sessions      Session[]
-
-  // Relations métier
-  biens          BienImmobilier[] @relation("ProprietaireBien")
-  demandesImmo   DemandeImmo[]
-  transactions   Transaction[]
-  commandes      Commande[]
-  livraisonsClient Livraison[] @relation("ClientLivraison")
-  livraisonsLivreur Livraison[] @relation("LivreurLivraison")
-  ventesAlimentation VenteAlimentation[]
-  auditLogs      AuditLog[]
+enum StatutTransaction {
+  EN_COURS
+  SUCCES
+  ECHEC
+  ANNULEE
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@unique([provider, providerAccountId])
+enum TypeTransaction {
+  DEPOT
+  RETRAIT
+  TRANSFERT
+  PAIEMENT_FACTURE
+  RECHARGE
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+enum ServiceMobile {
+  WAVE
+  ORANGE_MONEY
+  YASH_MONEY
+  KAPEY
+  FREE_MONEY
+  EMONEY
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-  @@unique([identifier, token])
+enum StatutCommande {
+  EN_ATTENTE
+  CONFIRMEE
+  EN_PREPARATION
+  EXPEDIEE
+  LIVREE
+  ANNULEE
 }
 
-// ============================================================
-// MODULE 1 - IMMOBILIER
-// ============================================================
-
-enum TypeBien {
-  APPARTEMENT
-  MAISON
-  VILLA
-  TERRAIN
-  BUREAU
-  COMMERCE
-  ENTREPOT
+enum StatutLivraison {
+  EN_ATTENTE
+  ACCEPTEE
+  EN_ROUTE_COLLECTE
+  COLLECTE
+  EN_ROUTE_LIVRAISON
+  LIVREE
+  ANNULEE
 }
 
 enum StatutBien {
@@ -118,154 +79,150 @@ enum StatutBien {
   INDISPONIBLE
 }
 
-enum TypeTransaction {
-  LOCATION
-  VENTE
-  GERANCE
+enum TypeBien {
+  APPARTEMENT
+  VILLA
+  STUDIO
+  BUREAU
+  COMMERCE
+  TERRAIN
+  ENTREPOT
 }
 
-model BienImmobilier {
-  id            String        @id @default(cuid())
-  titre         String
-  description   String
-  type          TypeBien
-  statut        StatutBien    @default(DISPONIBLE)
-  transactionType TypeTransaction
-  prix          Float
-  surface       Float?
-  nbChambres    Int?
-  nbSallesDeBain Int?
-  etage         Int?
-  adresse       String
-  ville         String
-  quartier      String?
-  latitude      Float?
-  longitude     Float?
-  photos        String[]      // URLs
-  caracteristiques Json?      // { piscine: true, garage: true, ... }
-  proprietaireId String
-  proprietaire  User          @relation("ProprietaireBien", fields: [proprietaireId], references: [id])
-  demandes      DemandeImmo[]
-  isPublished   Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+// ─── USER ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String      @unique
+  emailVerified DateTime?
+  phone         String?     @unique
+  password      String?
+  image         String?
+  role          Role        @default(CLIENT)
+  status        UserStatus  @default(PENDING)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  transactions    Transaction[]
+  ventesAgent     VenteAlimentation[] @relation("CaissierVente")
+  commandesClient Commande[]          @relation("ClientCommande")
+  livraisonsClient Livraison[]        @relation("ClientLivraison")
+  livraisonsLivreur Livraison[]       @relation("LivreurLivraison")
+  biensProprietaire BienImmobilier[]  @relation("ProprietaireBien")
+  auditLogs       AuditLog[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
 }
 
-model DemandeImmo {
-  id       String   @id @default(cuid())
-  bienId   String
-  bien     BienImmobilier @relation(fields: [bienId], references: [id])
-  userId   String
-  user     User     @relation(fields: [userId], references: [id])
-  message  String?
-  statut   String   @default("EN_ATTENTE")
-  createdAt DateTime @default(now())
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
 }
 
-// ============================================================
-// MODULE 2 - TRANSFERT D'ARGENT
-// ============================================================
-
-enum ServiceTransfert {
-  WAVE
-  ORANGE_MONEY
-  YASH_MONEY
-  KAPEY
-  FREE_MONEY
-  EMONEY
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum StatutTransaction {
-  EN_COURS
-  SUCCES
-  ECHEC
-  ANNULEE
-  SUSPENDUE
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
 }
 
-enum TypeOperationTransfert {
-  DEPOT
-  RETRAIT
-  TRANSFERT
-  PAIEMENT_FACTURE
-  RECHARGE
-}
+// ─── TRANSFERT D'ARGENT ──────────────────────────────────────────────────────
 
 model Transaction {
-  id            String              @id @default(cuid())
-  reference     String              @unique @default(cuid())
-  agentId       String
-  agent         User                @relation(fields: [agentId], references: [id])
-  service       ServiceTransfert
-  type          TypeOperationTransfert
-  montant       Float
-  frais         Float               @default(0)
-  clientPhone   String
-  clientNom     String?
-  statut        StatutTransaction   @default(EN_COURS)
-  notes         String?
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  id          String             @id @default(cuid())
+  service     ServiceMobile
+  type        TypeTransaction
+  montant     Float
+  clientPhone String
+  clientNom   String?
+  notes       String?
+  statut      StatutTransaction   @default(EN_COURS)
+  agentId     String
+  agent       User               @relation(fields: [agentId], references: [id])
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([agentId])
+  @@index([service])
+  @@index([createdAt])
 }
 
-// ============================================================
-// MODULE 3 - ALIMENTATION GENERALE
-// ============================================================
+// ─── ALIMENTATION ────────────────────────────────────────────────────────────
 
 model CategorieAlimentation {
-  id       String    @id @default(cuid())
-  nom      String
+  id       String                 @id @default(cuid())
+  nom      String                 @unique
   articles ArticleAlimentation[]
 }
 
 model ArticleAlimentation {
-  id          String   @id @default(cuid())
+  id          String                @id @default(cuid())
   nom         String
-  description String?
   prix        Float
-  stock       Int      @default(0)
-  unite       String   @default("unité")
-  image       String?
-  categorieId String
-  categorie   CategorieAlimentation @relation(fields: [categorieId], references: [id])
+  stock       Int                   @default(0)
+  unite       String                @default("unité")
+  isActive    Boolean               @default(true)
+  categorieId String?
+  categorie   CategorieAlimentation? @relation(fields: [categorieId], references: [id])
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   lignesVente LigneVente[]
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
 
-enum StatutVente {
-  OUVERTE
-  FERMEE
-  ANNULEE
+  @@index([categorieId])
+  @@index([isActive])
 }
 
 model VenteAlimentation {
-  id          String    @id @default(cuid())
-  reference   String    @unique @default(cuid())
-  caissier    User      @relation(fields: [caissierNodeId], references: [id])
+  id           String   @id @default(cuid())
+  total        Float
+  modePaiement String   @default("ESPECES")
+  statut       String   @default("FERMEE")
   caissierNodeId String
-  total       Float
-  statut      StatutVente @default(OUVERTE)
-  modePaiement String    @default("ESPECES")
-  lignes      LigneVente[]
-  createdAt   DateTime  @default(now())
+  caissier     User     @relation("CaissierVente", fields: [caissierNodeId], references: [id])
+  lignes       LigneVente[]
+  createdAt    DateTime @default(now())
+
+  @@index([caissierNodeId])
+  @@index([createdAt])
 }
 
 model LigneVente {
-  id        String   @id @default(cuid())
+  id        String              @id @default(cuid())
   venteId   String
-  vente     VenteAlimentation @relation(fields: [venteId], references: [id])
   articleId String
-  article   ArticleAlimentation @relation(fields: [articleId], references: [id])
   quantite  Int
   prixUnit  Float
   total     Float
+  vente     VenteAlimentation   @relation(fields: [venteId], references: [id], onDelete: Cascade)
+  article   ArticleAlimentation @relation(fields: [articleId], references: [id])
 }
 
-// ============================================================
-// MODULE 4 - E-COMMERCE
-// ============================================================
+// ─── E-COMMERCE ──────────────────────────────────────────────────────────────
 
 model CategorieEcommerce {
   id       String    @id @default(cuid())
@@ -276,128 +233,156 @@ model CategorieEcommerce {
 }
 
 model Produit {
-  id          String   @id @default(cuid())
+  id          String              @id @default(cuid())
   nom         String
-  slug        String   @unique
-  description String?
+  slug        String              @unique
+  description String?             @db.Text
   prix        Float
   prixPromo   Float?
-  stock       Int      @default(0)
-  images      String[]
-  categorieId String
-  categorie   CategorieEcommerce @relation(fields: [categorieId], references: [id])
+  stock       Int                 @default(0)
+  images      String[]            @default([])
+  isActive    Boolean             @default(true)
+  categorieId String?
+  categorie   CategorieEcommerce? @relation(fields: [categorieId], references: [id])
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
   lignesCommande LigneCommande[]
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
 
-enum StatutCommande {
-  EN_ATTENTE
-  CONFIRMEE
-  EN_PREPARATION
-  EXPEDIEE
-  LIVREE
-  ANNULEE
-  REMBOURSEE
-}
-
-enum ModePaiementCommande {
-  LIVRAISON
-  WAVE
-  ORANGE_MONEY
+  @@index([categorieId])
+  @@index([slug])
+  @@index([isActive])
 }
 
 model Commande {
-  id           String               @id @default(cuid())
-  reference    String               @unique @default(cuid())
-  clientId     String
-  client       User                 @relation(fields: [clientId], references: [id])
-  lignes       LigneCommande[]
-  total        Float
-  statut       StatutCommande       @default(EN_ATTENTE)
-  modePaiement ModePaiementCommande @default(LIVRAISON)
+  id               String         @id @default(cuid())
+  clientId         String
+  client           User           @relation("ClientCommande", fields: [clientId], references: [id])
+  total            Float
+  modePaiement     String
+  statut           StatutCommande @default(EN_ATTENTE)
   adresseLivraison String
   villeLivraison   String
   telephoneClient  String
-  notesClient  String?
-  paiementRef  String?
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
+  notesClient      String?
+  lignes           LigneCommande[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([clientId])
+  @@index([statut])
+  @@index([createdAt])
 }
 
 model LigneCommande {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   commandeId String
-  commande  Commande @relation(fields: [commandeId], references: [id])
-  produitId String
-  produit   Produit @relation(fields: [produitId], references: [id])
-  quantite  Int
-  prixUnit  Float
-  total     Float
+  produitId  String
+  quantite   Int
+  prixUnit   Float
+  total      Float
+  commande   Commande @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  produit    Produit  @relation(fields: [produitId], references: [id])
 }
 
-// ============================================================
-// MODULE 5 - LIVRAISON
-// ============================================================
-
-enum StatutLivraison {
-  EN_ATTENTE
-  ACCEPTEE
-  EN_ROUTE_COLLECTE
-  COLLECTE
-  EN_ROUTE_LIVRAISON
-  LIVREE
-  ANNULEE
-  ECHEC
-}
+// ─── LIVRAISON ────────────────────────────────────────────────────────────────
 
 model ZoneLivraison {
-  id          String     @id @default(cuid())
-  nom         String
+  id          String      @id @default(cuid())
+  nom         String      @unique
   description String?
   prix        Float
-  isActive    Boolean    @default(true)
+  isActive    Boolean     @default(true)
   livraisons  Livraison[]
 }
 
 model Livraison {
-  id               String         @id @default(cuid())
-  reference        String         @unique @default(cuid())
-  clientId         String
-  client           User           @relation("ClientLivraison", fields: [clientId], references: [id])
-  livreurId        String?
-  livreur          User?          @relation("LivreurLivraison", fields: [livreurId], references: [id])
-  zoneId           String?
-  zone             ZoneLivraison? @relation(fields: [zoneId], references: [id])
-  adresseCollecte  String
-  latCollecte      Float?
-  lngCollecte      Float?
-  adresseDest      String
-  latDest          Float?
-  lngDest          Float?
-  description      String?
-  prix             Float
-  statut           StatutLivraison @default(EN_ATTENTE)
-  livreurLat       Float?         // position temps réel
-  livreurLng       Float?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  id              String         @id @default(cuid())
+  clientId        String
+  client          User           @relation("ClientLivraison", fields: [clientId], references: [id])
+  livreurId       String?
+  livreur         User?          @relation("LivreurLivraison", fields: [livreurId], references: [id])
+  zoneId          String?
+  zone            ZoneLivraison? @relation(fields: [zoneId], references: [id])
+  adresseCollecte String
+  adresseDest     String
+  latCollecte     Float?
+  lngCollecte     Float?
+  latDest         Float?
+  lngDest         Float?
+  livreurLat      Float?
+  livreurLng      Float?
+  description     String?
+  prix            Float
+  statut          StatutLivraison @default(EN_ATTENTE)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([clientId])
+  @@index([livreurId])
+  @@index([statut])
 }
 
-// ============================================================
-// SECURITE & AUDIT
-// ============================================================
+// ─── IMMOBILIER ──────────────────────────────────────────────────────────────
+
+model BienImmobilier {
+  id             String        @id @default(cuid())
+  titre          String
+  description    String?       @db.Text
+  type           TypeBien
+  statut         StatutBien    @default(DISPONIBLE)
+  prixLoyer      Float?
+  prixVente      Float?
+  surface        Float?
+  nbChambres     Int?
+  nbSallesDeBain Int?
+  adresse        String
+  ville          String        @default("Dakar")
+  quartier       String?
+  latitude       Float?
+  longitude      Float?
+  images         String[]      @default([])
+  isActive       Boolean       @default(true)
+  proprietaireId String
+  proprietaire   User          @relation("ProprietaireBien", fields: [proprietaireId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  demandesVisite DemandeVisite[]
+
+  @@index([proprietaireId])
+  @@index([statut])
+  @@index([type])
+  @@index([ville])
+}
+
+model DemandeVisite {
+  id        String   @id @default(cuid())
+  bienId    String
+  bien      BienImmobilier @relation(fields: [bienId], references: [id], onDelete: Cascade)
+  nomClient String
+  telClient String
+  emailClient String?
+  message   String?
+  dateVisite DateTime?
+  statut    String   @default("EN_ATTENTE")
+  createdAt DateTime @default(now())
+
+  @@index([bienId])
+}
+
+// ─── SÉCURITÉ ─────────────────────────────────────────────────────────────────
 
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  action    String   // ex: "TRANSACTION_CREATE", "LOGIN", "USER_BAN"
-  entity    String?  // ex: "Transaction", "User"
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
   entityId  String?
-  metadata  Json?    // données supplémentaires
+  metadata  Json?
   ip        String?
-  userAgent String?
   createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
 }
