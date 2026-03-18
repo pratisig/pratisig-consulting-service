@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+:root {
+  --pratisig-primary: #1a3a5c;
+  --pratisig-secondary: #e8a020;
+  --pratisig-accent: #27ae60;
+  --pratisig-danger: #e74c3c;
+  --pratisig-bg: #f8fafc;
+}
+
+body {
+  background-color: var(--pratisig-bg);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Scrollbar custom */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: var(--pratisig-primary); border-radius: 3px; }
