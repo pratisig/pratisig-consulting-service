@@ -1,33 +1,19 @@
 import { prisma } from '@/lib/db/prisma';
-import { headers } from 'next/headers';
 
-interface AuditLogParams {
+interface AuditInput {
   userId?: string;
   action: string;
   entity?: string;
   entityId?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, any>;
+  ip?: string;
 }
 
-export async function logAudit(params: AuditLogParams): Promise<void> {
+export async function logAudit(input: AuditInput): Promise<void> {
   try {
-    const headersList = await headers();
-    const ip = headersList.get('x-forwarded-for') ??
-                headersList.get('x-real-ip') ?? 'unknown';
-    const userAgent = headersList.get('user-agent') ?? 'unknown';
-
-    await prisma.auditLog.create({
-      data: {
-        userId: params.userId,
-        action: params.action,
-        entity: params.entity,
-        entityId: params.entityId,
-        metadata: params.metadata as any,
-        ip,
-        userAgent,
-      },
-    });
-  } catch (error) {
-    console.error('[AuditLog Error]', error);
+    await prisma.auditLog.create({ data: input });
+  } catch (err) {
+    // Ne jamais bloquer l'opération principale pour un log
+    console.error('[AuditLog] Erreur:', err);
   }
 }
