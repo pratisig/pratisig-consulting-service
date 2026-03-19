@@ -1,39 +1,62 @@
 'use client';
-import { useEffect, useRef } from 'react';
 
-interface Bien {
-  id: string;
-  titre: string;
-  prix: number;
-  latitude: number;
-  longitude: number;
-  transactionType: string;
-  type: string;
-}
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 
-export default function CarteImmobilier({ biens }: { biens: Bien[] }) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+// On charge react-leaflet seulement côté client
+const MapContainer = dynamic(
+  async () => (await import('react-leaflet')).MapContainer,
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  async () => (await import('react-leaflet')).TileLayer,
+  { ssr: false }
+);
+const Marker = dynamic(
+  async () => (await import('react-leaflet')).Marker,
+  { ssr: false }
+);
 
+import 'leaflet/dist/leaflet.css';
+
+type Props = {
+  lat: number;
+  lng: number;
+  zoom?: number;
+};
+
+export default function CarteImmobilier({ lat, lng, zoom = 13 }: Props) {
+  const [ready, setReady] = useState(false);
+
+  // On ne rend la carte que côté client, après le mount
   useEffect(() => {
-    if (typeof window === 'undefined' || !mapRef.current) return;
-    if (mapInstanceRef.current) return;
+    setReady(true);
+  }, []);
 
-    // ✅ Injecter le CSS Leaflet via un <link> CDN (évite l'import statique webpack)
-    if (!document.getElementById('leaflet-css')) {
-      const link = document.createElement('link');
-      link.id = 'leaflet-css';
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-      link.crossOrigin = '';
-      document.head.appendChild(link);
-    }
+  if (!ready) {
+    return (
+      <div className="w-full h-64 bg-slate-100 rounded-xl flex items-center justify-center text-xs text-gray-400">
+        Chargement de la carte...
+      </div>
+    );
+  }
 
-    import('leaflet').then((L) => {
-      const map = L.default.map(mapRef.current!, {
-        center: [14.6937, -17.4441], // Dakar
-        zoom: 12,
+  return (
+    <div className="w-full h-64 rounded-xl overflow-hidden">
+      <MapContainer
+        center={[lat, lng]}
+        zoom={zoom}
+        style={{ height: '100%', width: '100%' }}
+      >
+        <TileLayer
+          attribution="&copy; OpenStreetMap contributors"
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[lat, lng]} />
+      </MapContainer>
+    </div>
+  );
+}
       });
       L.default.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap',
