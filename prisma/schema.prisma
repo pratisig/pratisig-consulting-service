@@ -12,12 +12,15 @@ datasource db {
 enum Role {
   SUPER_ADMIN
   ADMIN
-  SUPERVISEUR
+  MANAGER_IMMOBILIER
+  MANAGER_ECOMMERCE
+  MANAGER_LIVRAISON
+  MANAGER_TRANSFERT
+  MANAGER_ALIMENTATION
   AGENT
-  GERANT
   CAISSIER
-  PROPRIETAIRE
   LIVREUR
+  PROPRIETAIRE
   CLIENT
 }
 
@@ -26,6 +29,50 @@ enum UserStatus {
   PENDING
   BANNED
   SUSPENDED
+}
+
+enum Permission {
+  // Immobilier
+  immobilier_view
+  immobilier_create
+  immobilier_edit
+  immobilier_delete
+  immobilier_publish
+  // E-commerce
+  ecommerce_view
+  ecommerce_create
+  ecommerce_edit
+  ecommerce_delete
+  // Livraison
+  livraison_view
+  livraison_create
+  livraison_edit
+  livraison_delete
+  livraison_assign
+  // Transfert
+  transfert_view
+  transfert_create
+  transfert_validate
+  transfert_delete
+  // Alimentation / Caisse
+  caisse_view
+  caisse_create
+  caisse_validate
+  caisse_delete
+  caisse_close
+  // Utilisateurs
+  users_view
+  users_create
+  users_edit
+  users_delete
+  users_assign_role
+  // Rapports
+  reports_view
+  reports_export
+  // Platform
+  platform_settings
+  platform_audit
+  notifications_manage
 }
 
 enum StatutTransaction {
@@ -89,6 +136,34 @@ enum TypeBien {
   ENTREPOT
 }
 
+enum AuditAction {
+  USER_CREATE
+  USER_UPDATE
+  USER_DELETE
+  USER_ROLE_CHANGE
+  USER_BAN
+  USER_ACTIVATE
+  BIEN_CREATE
+  BIEN_UPDATE
+  BIEN_DELETE
+  BIEN_PUBLISH
+  PRODUIT_CREATE
+  PRODUIT_UPDATE
+  PRODUIT_DELETE
+  COMMANDE_CREATE
+  COMMANDE_UPDATE
+  LIVRAISON_CREATE
+  LIVRAISON_UPDATE
+  LIVRAISON_ACCEPT
+  LIVRAISON_COMPLETE
+  TRANSACTION_CREATE
+  TRANSACTION_VALIDATE
+  CAISSE_OPEN
+  CAISSE_CLOSE
+  PERMISSION_CHANGE
+  SETTINGS_UPDATE
+}
+
 // ─── USER ────────────────────────────────────────────────────────────────────
 
 model User {
@@ -101,11 +176,13 @@ model User {
   image         String?
   role          Role        @default(CLIENT)
   status        UserStatus  @default(PENDING)
+  lastLogin     DateTime?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   accounts        Account[]
   sessions        Session[]
+  permissions     UserPermission[]
   transactions    Transaction[]
   ventesAgent     VenteAlimentation[] @relation("CaissierVente")
   commandesClient Commande[]          @relation("ClientCommande")
@@ -113,6 +190,7 @@ model User {
   livraisonsLivreur Livraison[]       @relation("LivreurLivraison")
   biensProprietaire BienImmobilier[]  @relation("ProprietaireBien")
   auditLogs       AuditLog[]
+  caissesOuvertes CaisseSession[]     @relation("CaissierSession")
 
   @@index([email])
   @@index([role])
@@ -149,6 +227,21 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
   @@unique([identifier, token])
+}
+
+// ─── RBAC - PERMISSIONS ─────────────────────────────────────────────────────
+
+model UserPermission {
+  id         String     @id @default(cuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission
+  grantedBy  String?
+  grantedAt  DateTime   @default(now())
+  revokedAt  DateTime?
+
+  @@unique([userId, permission])
+  @@index([userId])
 }
 
 // ─── TRANSFERT D'ARGENT ──────────────────────────────────────────────────────
@@ -197,11 +290,28 @@ model ArticleAlimentation {
   @@index([isActive])
 }
 
+model CaisseSession {
+  id           String   @id @default(cuid())
+  caissierId   String
+  caissier     User     @relation("CaissierSession", fields: [caissierId], references: [id])
+  montantOuverture Float @default(0)
+  montantFermeture   Float?
+  statut       String   @default("OUVERTE") // OUVERTE, FERMEE
+  openedAt     DateTime @default(now())
+  closedAt     DateTime?
+  ventes       VenteAlimentation[]
+
+  @@index([caissierId])
+  @@index([statut])
+}
+
 model VenteAlimentation {
   id           String   @id @default(cuid())
   total        Float
   modePaiement String   @default("ESPECES")
   statut       String   @default("FERMEE")
+  caisseSessionId String?
+  caisseSession CaisseSession? @relation(fields: [caisseSessionId], references: [id])
   caissierNodeId String
   caissier     User     @relation("CaissierVente", fields: [caissierNodeId], references: [id])
   lignes       LigneVente[]
@@ -369,20 +479,32 @@ model DemandeVisite {
   @@index([bienId])
 }
 
-// ─── SÉCURITÉ ─────────────────────────────────────────────────────────────────
+// ─── SÉCURITÉ & AUDIT ────────────────────────────────────────────────────────
 
 model AuditLog {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  action    String
+  user      User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    AuditAction
   entity    String?
   entityId  String?
   metadata  Json?
   ip        String?
-  createdAt DateTime @default(now())
+  userAgent String?
+  createdAt DateTime     @default(now())
 
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+}
+
+model RateLimitEntry {
+  id        String   @id @default(cuid())
+  key       String
+  count     Int      @default(1)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([key])
+  @@index([expiresAt])
 }
