@@ -7,8 +7,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function CartePage() {
   const biens = await prisma.bienImmobilier.findMany({
-    where: { isPublished: true, statut: 'DISPONIBLE', latitude: { not: null }, longitude: { not: null } },
-    select: { id: true, titre: true, prix: true, latitude: true, longitude: true, transactionType: true, type: true },
+    where: { isActive: true, statut: 'DISPONIBLE', latitude: { not: null }, longitude: { not: null } },
+    select: { id: true, titre: true, prixVente: true, prixLoyer: true, latitude: true, longitude: true, type: true },
   }).catch(() => []);
 
   return (

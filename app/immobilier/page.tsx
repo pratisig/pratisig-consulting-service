@@ -8,7 +8,7 @@ export default async function ImmobilierPage() {
   let biens: any[] = [];
   try {
     biens = await prisma.bienImmobilier.findMany({
-      where: { isPublished: true, statut: 'DISPONIBLE' },
+      where: { isActive: true, statut: 'DISPONIBLE' },
       orderBy: { createdAt: 'desc' },
       take: 12,
     });
@@ -47,8 +47,8 @@ export default async function ImmobilierPage() {
             {biens.map((bien) => (
               <div key={bien.id} className="bg-white rounded-2xl shadow hover:shadow-lg transition-shadow overflow-hidden">
                 <div className="h-48 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
-                  {bien.photos?.[0] ? (
-                    <img src={bien.photos[0]} alt={bien.titre} className="w-full h-full object-cover" />
+                  {bien.images?.[0] ? (
+                    <img src={bien.images[0]} alt={bien.titre} className="w-full h-full object-cover" />
                   ) : (
                     <Home size={48} className="text-slate-400" />
                   )}
@@ -60,11 +60,10 @@ export default async function ImmobilierPage() {
                   </div>
                   <h3 className="font-bold text-[#1a3a5c] mb-1">{bien.titre}</h3>
                   <p className="text-[#e8a020] font-bold">
-                    {bien.prix.toLocaleString('fr-FR')} FCFA
-                    {bien.transactionType === 'LOCATION' ? '/mois' : ''}
+                    {bien.prixVente ? `${bien.prixVente.toLocaleString('fr-FR')} FCFA` : `${(bien.prixLoyer ?? 0).toLocaleString('fr-FR')} FCFA/mois`}
                   </p>
                   <span className="inline-block mt-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                    {bien.transactionType} · {bien.type}
+                    {bien.prixVente ? 'Vente' : 'Location'} · {bien.type}
                   </span>
                 </div>
               </div>

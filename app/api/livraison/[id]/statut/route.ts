@@ -10,26 +10,28 @@ const statutSchema = z.object({
   livreurLng: z.number().optional(),
 });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
   const user = session.user as any;
+
+  const { id } = await params;
 
   const body = await req.json();
   const parsed = statutSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
-  const livraison = await prisma.livraison.findUnique({ where: { id: params.id } });
+  const livraison = await prisma.livraison.findUnique({ where: { id } });
   if (!livraison) return NextResponse.json({ error: 'Non trouvée' }, { status: 404 });
 
   const canUpdate = livraison.livreurId === user.id || ['ADMIN','SUPER_ADMIN','SUPERVISEUR'].includes(user.role);
   if (!canUpdate) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const updated = await prisma.livraison.update({
-    where: { id: params.id },
+    where: { id },
     data: { statut: parsed.data.statut, livreurLat: parsed.data.livreurLat, livreurLng: parsed.data.livreurLng },
   });
 
-  await logAudit({ userId: user.id, action: `LIVRAISON_${parsed.data.statut}`, entity: 'Livraison', entityId: params.id });
+  await logAudit({ userId: user.id, action: `LIVRAISON_${parsed.data.statut}`, entity: 'Livraison', entityId: id });
   return NextResponse.json(updated);
 }

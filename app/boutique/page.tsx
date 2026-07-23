@@ -4,14 +4,15 @@ import { ShoppingBag, Search } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default async function BoutiquePage({ searchParams }: { searchParams: { cat?: string; q?: string } }) {
+export default async function BoutiquePage({ searchParams }: { searchParams: Promise<{ cat?: string; q?: string }> }) {
+  const sp = await searchParams;
   const [produits, categories] = await Promise.all([
     prisma.produit.findMany({
       where: {
         isActive: true,
         stock: { gt: 0 },
-        ...(searchParams.cat && { categorieId: searchParams.cat }),
-        ...(searchParams.q && { nom: { contains: searchParams.q, mode: 'insensitive' } }),
+        ...(sp.cat && { categorieId: sp.cat }),
+        ...(sp.q && { nom: { contains: sp.q, mode: 'insensitive' } }),
       },
       include: { categorie: true },
       orderBy: { createdAt: 'desc' },
@@ -44,7 +45,7 @@ export default async function BoutiquePage({ searchParams }: { searchParams: { c
           <form method="GET" className="flex gap-2 flex-1 min-w-0">
             <div className="relative flex-1">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input name="q" defaultValue={searchParams.q}
+              <input name="q" defaultValue={sp.q}
                 className="w-full border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
                 placeholder="Rechercher un produit..." />
             </div>
@@ -54,12 +55,12 @@ export default async function BoutiquePage({ searchParams }: { searchParams: { c
         {/* Catégories */}
         <div className="max-w-6xl mx-auto px-6 pb-3 flex gap-2 overflow-x-auto">
           <Link href="/boutique" className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-            !searchParams.cat ? 'bg-[#1a3a5c] text-white' : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
+            !sp.cat ? 'bg-[#1a3a5c] text-white' : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
           }`}>Tout</Link>
           {(categories as any[]).map((cat) => (
             <Link key={cat.id} href={`/boutique?cat=${cat.id}`}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-                searchParams.cat === cat.id ? 'bg-[#1a3a5c] text-white' : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
+                sp.cat === cat.id ? 'bg-[#1a3a5c] text-white' : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
               }`}>{cat.nom}</Link>
           ))}
         </div>

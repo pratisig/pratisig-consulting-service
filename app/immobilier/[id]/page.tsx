@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MapPin, Home, BedDouble, Bath, Ruler, ArrowLeft, Phone } from 'lucide-react';
 
-export default async function FicheBienPage({ params }: { params: { id: string } }) {
-  const bien = await prisma.bienImmobilier.findUnique({
-    where: { id: params.id, isPublished: true },
+export default async function FicheBienPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const bien = await prisma.bienImmobilier.findFirst({
+    where: { id, isActive: true },
     include: { proprietaire: { select: { name: true, phone: true, email: true } } },
   }).catch(() => null);
 
@@ -25,15 +26,15 @@ export default async function FicheBienPage({ params }: { params: { id: string }
         {/* Photos */}
         <div className="lg:col-span-2 space-y-4">
           <div className="rounded-2xl overflow-hidden h-72 bg-slate-200">
-            {bien.photos?.[0] ? (
-              <img src={bien.photos[0]} alt={bien.titre} className="w-full h-full object-cover" />
+            {bien.images?.[0] ? (
+              <img src={bien.images[0]} alt={bien.titre} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center"><Home size={64} className="text-slate-400" /></div>
             )}
           </div>
-          {bien.photos?.length > 1 && (
+          {bien.images?.length > 1 && (
             <div className="grid grid-cols-3 gap-2">
-              {bien.photos.slice(1, 4).map((p: string, i: number) => (
+              {bien.images.slice(1, 4).map((p: string, i: number) => (
                 <div key={i} className="h-24 rounded-xl overflow-hidden bg-slate-200">
                   <img src={p} alt="" className="w-full h-full object-cover" />
                 </div>
@@ -50,7 +51,8 @@ export default async function FicheBienPage({ params }: { params: { id: string }
               {bien.nbChambres && <span className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full text-sm"><BedDouble size={14} />{bien.nbChambres} chambre(s)</span>}
               {bien.nbSallesDeBain && <span className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full text-sm"><Bath size={14} />{bien.nbSallesDeBain} sdb</span>}
               <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">{bien.type}</span>
-              <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">{bien.transactionType}</span>
+              {bien.prixVente && <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Vente</span>}
+              {bien.prixLoyer && <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm">Location</span>}
             </div>
             <h2 className="font-semibold text-[#1a3a5c] mb-2">Description</h2>
             <p className="text-gray-600 leading-relaxed">{bien.description}</p>
@@ -60,8 +62,7 @@ export default async function FicheBienPage({ params }: { params: { id: string }
         <div className="space-y-4">
           <div className="bg-white rounded-2xl p-6 shadow">
             <p className="text-3xl font-bold text-[#e8a020] mb-1">
-              {bien.prix.toLocaleString('fr-FR')} FCFA
-              {bien.transactionType === 'LOCATION' ? <span className="text-sm font-normal text-gray-500">/mois</span> : ''}
+              {bien.prixVente ? `${bien.prixVente.toLocaleString('fr-FR')} FCFA` : `${(bien.prixLoyer ?? 0).toLocaleString('fr-FR')} FCFA/mois`}
             </p>
             <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
               bien.statut === 'DISPONIBLE' ? 'bg-green-100 text-green-700' :

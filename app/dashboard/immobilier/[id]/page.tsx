@@ -7,12 +7,13 @@ import { ArrowLeft, MapPin, BedDouble, Bath, Maximize2, Phone, Mail, Calendar } 
 
 export const dynamic = 'force-dynamic';
 
-export default async function DetailBienPage({ params }: { params: { id: string } }) {
+export default async function DetailBienPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session) redirect('/auth/login');
 
+  const { id } = await params;
   const bien = await prisma.bienImmobilier.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       proprietaire: { select: { name: true, phone: true, email: true } },
       demandesVisite: { orderBy: { createdAt: 'desc' }, take: 10 },

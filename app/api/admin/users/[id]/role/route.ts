@@ -9,14 +9,16 @@ const schema = z.object({
   role: z.enum(['SUPER_ADMIN','ADMIN','SUPERVISEUR','AGENT','GERANT','CAISSIER','PROPRIETAIRE','LIVREUR','CLIENT']),
 });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
   const adminUser = session.user as any;
   if (!hasPermission(adminUser.role, 'admin:users')) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
+  const { id } = await params;
+
   // Empêcher de se modifier soi-même
-  if (params.id === adminUser.id) return NextResponse.json({ error: 'Vous ne pouvez pas modifier votre propre rôle' }, { status: 400 });
+  if (id === adminUser.id) return NextResponse.json({ error: 'Vous ne pouvez pas modifier votre propre rôle' }, { status: 400 });
 
   const body = await req.json();
   const parsed = schema.safeParse(body);
@@ -27,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: 'Seul le Super Admin peut assigner ce rôle' }, { status: 403 });
   }
 
-  const updated = await prisma.user.update({ where: { id: params.id }, data: { role: parsed.data.role } });
-  await logAudit({ userId: adminUser.id, action: 'USER_ROLE_UPDATE', entity: 'User', entityId: params.id, metadata: { newRole: parsed.data.role } });
+  const updated = await prisma.user.update({ where: { id }, data: { role: parsed.data.role } });
+  await logAudit({ userId: adminUser.id, action: 'USER_ROLE_UPDATE', entity: 'User', entityId: id, metadata: { newRole: parsed.data.role } });
   return NextResponse.json({ success: true, role: updated.role });
 }

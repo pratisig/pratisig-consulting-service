@@ -6,9 +6,10 @@ import AddToCartButton from '@/components/boutique/AddToCartButton';
 
 export const dynamic = 'force-dynamic';
 
-export default async function DetailProduitPage({ params }: { params: { slug: string } }) {
+export default async function DetailProduitPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const produit = await prisma.produit.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: { categorie: true },
   });
   if (!produit || !produit.isActive) notFound();
