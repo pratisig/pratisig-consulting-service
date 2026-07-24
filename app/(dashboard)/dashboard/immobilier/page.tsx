@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 import Link from 'next/link';
-import { Home, Plus, MapPin, Eye } from 'lucide-react';
+import { Home, Plus, MapPin, Eye, Edit3 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,14 +11,15 @@ export default async function ImmobilierPage() {
   if (!user) redirect('/login');
   
 
-  const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT'].includes(user.role);
+  const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT','MANAGER_IMMOBILIER'].includes(user.role);
   const isProprietaire = user.role === 'PROPRIETAIRE';
 
   const biens = await prisma.bienImmobilier.findMany({
     where: isAdmin ? {} : isProprietaire ? { proprietaireId: user.id } : { isActive: true },
     orderBy: { createdAt: 'desc' },
     take: 30,
-    include: { proprietaire: { select: { name: true } }, _count: { select: { demandesVisite: true } } },
+    include: { proprietaire: { select: { name: true } }, _count: { select: { demandesVisite: true } }, },
+    // proprietaireId is included by default
   }).catch(() => []);
 
   const STATUT_COLORS: Record<string,string> = {
@@ -73,10 +74,17 @@ export default async function ImmobilierPage() {
                     {bien.prixLoyer && <p className="font-bold text-[#e8a020]">{bien.prixLoyer.toLocaleString('fr-FR')} F<span className="text-xs text-gray-400">/mois</span></p>}
                     {bien.prixVente && <p className="font-bold text-[#1a3a5c]">{bien.prixVente.toLocaleString('fr-FR')} F</p>}
                   </div>
-                  <Link href={`/dashboard/immobilier/${bien.id}`} className="flex items-center gap-1 text-xs text-[#1a3a5c] hover:text-[#e8a020] transition-colors">
-                    <Eye size={14} />
-                    {bien._count.demandesVisite} visite(s)
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    {(isAdmin || (isProprietaire && bien.proprietaireId === user.id)) && (
+                      <Link href={`/dashboard/immobilier/${bien.id}/edit`} className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors" title="Modifier">
+                        <Edit3 size={14} />
+                      </Link>
+                    )}
+                    <Link href={`/dashboard/immobilier/${bien.id}`} className="flex items-center gap-1 text-xs text-[#1a3a5c] hover:text-[#e8a020] transition-colors">
+                      <Eye size={14} />
+                      {bien._count.demandesVisite} visite(s)
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

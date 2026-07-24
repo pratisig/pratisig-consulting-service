@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import DeliveryLocationSelector from '@/components/shared/DeliveryLocationSelector';
 import { calculatePriceByDistance, estimateDeliveryTime, formatPrice, formatDuration, calculateDistance } from '@/lib/utils/delivery';
 import { geocodeAddress } from '@/lib/utils/geocoding';
+import { getErrorMessage } from '@/lib/utils/error';
 
 const InteractiveMap = dynamic(() => import('@/components/shared/InteractiveMap'), {
   ssr: false,
@@ -152,7 +153,7 @@ export default function NouvelleLivraisonPage() {
       toast.success('Livraison demandée ! Un livreur va accepter.');
       router.push('/dashboard/livraison');
     } catch (err: any) { 
-      toast.error(err.message); 
+      toast.error(getErrorMessage(err)); 
     } finally { 
       setLoading(false); 
     }

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Plus, Minus, Trash2, Printer, CheckCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { getErrorMessage } from '@/lib/utils/error';
 
 interface Article {
   id: string; nom: string; prix: number; stock: number; unite: string;
@@ -59,7 +60,7 @@ export default function CaissePage() {
       if (!res.ok) throw new Error(data.error ?? 'Erreur');
       toast.success(`Vente validée ! Total : ${total.toLocaleString('fr-FR')} FCFA`);
       setPanier([]);
-    } catch (err: any) { toast.error(err.message); } finally { setLoading(false); }
+    } catch (err: any) { toast.error(getErrorMessage(err)); } finally { setLoading(false); }
   }
 
   const articlesFiltres = articles.filter(a =>

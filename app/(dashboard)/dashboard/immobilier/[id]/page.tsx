@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, BedDouble, Bath, Maximize2, Phone, Mail, Calendar } from 'lucide-react';
+import { ArrowLeft, MapPin, BedDouble, Bath, Maximize2, Phone, Mail, Calendar, Edit3, Trash2, Eye } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +22,8 @@ export default async function DetailBienPage({ params }: { params: Promise<{ id:
   if (!bien) notFound();
 
   const isOwner = bien.proprietaireId === user.id;
-  const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT'].includes(user.role);
+  const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT','MANAGER_IMMOBILIER'].includes(user.role);
+  const canEdit = isOwner || isAdmin;
 
   const STATUT_COLORS: Record<string,string> = {
     DISPONIBLE: 'bg-green-100 text-green-700',
@@ -41,8 +42,18 @@ export default async function DetailBienPage({ params }: { params: Promise<{ id:
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <Link href="/dashboard/immobilier" className="text-gray-400 hover:text-[#1a3a5c]"><ArrowLeft size={20} /></Link>
-          <h1 className="text-xl font-bold text-[#1a3a5c] truncate">{bien.titre}</h1>
+          <h1 className="text-xl font-bold text-[#1a3a5c] truncate flex-1">{bien.titre}</h1>
           <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUT_COLORS[bien.statut]}`}>{bien.statut}</span>
+          {canEdit && (
+            <>
+              <Link href={`/dashboard/immobilier/${bien.id}`} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-[#1a3a5c]" title="Voir la fiche publique">
+                <Eye size={18} />
+              </Link>
+              <Link href={`/dashboard/immobilier/${bien.id}/edit`} className="p-2 hover:bg-blue-50 rounded-lg text-blue-600" title="Modifier le bien">
+                <Edit3 size={18} />
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

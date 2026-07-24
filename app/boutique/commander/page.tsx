@@ -7,6 +7,7 @@ import { Loader2, ShoppingBag, MapPin, Phone, Truck, Clock } from 'lucide-react'
 import Link from 'next/link';
 import LocationSelector from '@/components/shared/LocationSelector';
 import { calculateDeliveryPrice, formatPrice, estimateDeliveryTime, formatDuration } from '@/lib/utils/delivery';
+import { getErrorMessage } from '@/lib/utils/error';
 
 interface CartItem { id: string; nom: string; prix: number; quantite: number; }
 
@@ -107,7 +108,7 @@ export default function CommanderPage() {
       toast.success('🎉 Commande passée avec succès !');
       router.push('/boutique/commande-confirmee');
     } catch (err: any) { 
-      toast.error(err.message); 
+      toast.error(getErrorMessage(err)); 
     } finally { 
       setLoading(false); 
     }

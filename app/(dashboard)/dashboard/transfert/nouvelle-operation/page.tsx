@@ -1,9 +1,11 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Loader2, ArrowLeft, Send } from 'lucide-react';
 import Link from 'next/link';
+import { getErrorMessage } from '@/lib/utils/error';
 
 const SERVICES = [
   { id: 'WAVE', nom: 'Wave', couleur: '#1B9BF0', emoji: '🌊' },
@@ -49,7 +51,7 @@ export default function NouvelleOperationPage() {
       toast.success('Opération enregistrée !');
       router.push('/dashboard/transfert');
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

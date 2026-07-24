@@ -2,11 +2,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Home, MapPin, Search } from 'lucide-react';
+import { Loader2, ArrowLeft, Home, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import LocationSelector from '@/components/shared/LocationSelector';
 import dynamic from 'next/dynamic';
-import { geocodeAddress } from '@/lib/utils/geocoding';
 
 const InteractiveMap = dynamic(() => import('@/components/shared/InteractiveMap'), {
   ssr: false,
@@ -19,12 +18,22 @@ const InteractiveMap = dynamic(() => import('@/components/shared/InteractiveMap'
 
 const TYPES = ['APPARTEMENT','VILLA','STUDIO','BUREAU','COMMERCE','TERRAIN','ENTREPOT'];
 
+function getErrorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === 'string') return err;
+  if (typeof err === 'object' && err !== null) {
+    const e = err as Record<string, unknown>;
+    if (typeof e.error === 'string') return e.error;
+    if (typeof e.message === 'string') return e.message;
+  }
+  return 'Une erreur est survenue';
+}
+
 export default function NouveauBienPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [geocoding, setGeocoding] = useState(false);
-  const [showMap, setShowMap] = useState(false);
   const [coordinates, setCoordinates] = useState({ lat: 14.6937, lon: -17.4467 }); // Dakar par défaut
+  const [mapReady, setMapReady] = useState(false);
   
   const [form, setForm] = useState({
     titre: '', description: '', type: 'APPARTEMENT',
@@ -64,53 +73,14 @@ export default function NouveauBienPage() {
     }
   }
 
-  async function handleGeocode() {
-    if (!form.adresse) {
-      toast.error('Veuillez entrer une adresse');
-      return;
-    }
-
-    setGeocoding(true);
-    try {
-      // Construire l'adresse complète
-      const fullAddress = [
-        form.adresse,
-        form.quartier,
-        form.commune,
-        form.department,
-        form.region,
-        'Sénégal'
-      ].filter(Boolean).join(', ');
-
-      const result = await geocodeAddress(fullAddress);
-      
-      if (result) {
-        setCoordinates({ lat: result.lat, lon: result.lon });
-        setForm(prev => ({
-          ...prev,
-          latitude: result.lat.toString(),
-          longitude: result.lon.toString(),
-        }));
-        setShowMap(true);
-        toast.success('Position trouvée !');
-      } else {
-        toast.error('Adresse non trouvée. Essayez d\'être plus précis ou cliquez sur la carte.');
-      }
-    } catch (error) {
-      toast.error('Erreur de géocodage');
-    } finally {
-      setGeocoding(false);
-    }
-  }
-
   function handleMapClick(lat: number, lon: number) {
     setCoordinates({ lat, lon });
     setForm(prev => ({
       ...prev,
-      latitude: lat.toString(),
-      longitude: lon.toString(),
+      latitude: lat.toFixed(6),
+      longitude: lon.toFixed(6),
     }));
-    toast.success('Position mise à jour');
+    setMapReady(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -118,16 +88,28 @@ export default function NouveauBienPage() {
     setLoading(true);
     
     try {
+      const adresseComplete = [
+        form.adresse,
+        form.quartier,
+        form.commune,
+        form.department,
+        form.region,
+      ].filter(Boolean).join(', ');
+
       const payload = {
-        ...form,
+        titre: form.titre,
+        description: form.description,
+        type: form.type,
         prixLoyer: form.prixLoyer ? parseFloat(form.prixLoyer) : undefined,
         prixVente: form.prixVente ? parseFloat(form.prixVente) : undefined,
         surface: form.surface ? parseFloat(form.surface) : undefined,
         nbChambres: form.nbChambres ? parseInt(form.nbChambres) : undefined,
         nbSallesDeBain: form.nbSallesDeBain ? parseInt(form.nbSallesDeBain) : undefined,
+        adresse: adresseComplete || form.adresse,
+        ville: form.commune || form.department || form.region || 'Dakar',
+        quartier: form.quartier || undefined,
         latitude: form.latitude ? parseFloat(form.latitude) : undefined,
         longitude: form.longitude ? parseFloat(form.longitude) : undefined,
-        ville: form.commune || form.department || 'Dakar',
       };
 
       const res = await fetch('/api/immobilier/biens', {
@@ -137,12 +119,14 @@ export default function NouveauBienPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'Erreur');
+      if (!res.ok) {
+        throw new Error(typeof data.error === 'string' ? data.error : 'Erreur lors de la création du bien');
+      }
       
       toast.success('Bien ajouté avec succès !');
       router.push('/dashboard/immobilier');
-    } catch (err: any) { 
-      toast.error(err.message); 
+    } catch (err: unknown) { 
+      toast.error(getErrorMessage(err)); 
     } finally { 
       setLoading(false); 
     }
@@ -275,83 +259,52 @@ export default function NouveauBienPage() {
             <LocationSelector onLocationChange={handleLocationChange} />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Adresse détaillée *</label>
-              <div className="flex gap-2">
-                <input 
-                  name="adresse" 
-                  value={form.adresse} 
-                  onChange={handleChange} 
-                  required
-                  className="flex-1 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
-                  placeholder="Rue 10 x 23, Villa n°5" 
-                />
-                <button
-                  type="button"
-                  onClick={handleGeocode}
-                  disabled={geocoding}
-                  className="px-4 py-3 bg-[#e8a020] text-white rounded-xl hover:bg-[#d4911d] transition-colors disabled:opacity-50 flex items-center gap-2"
-                >
-                  {geocoding ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
-                  {geocoding ? 'Recherche...' : 'Géolocaliser'}
-                </button>
-              </div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Adresse détaillée</label>
+              <input 
+                name="adresse" 
+                value={form.adresse} 
+                onChange={handleChange}
+                className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+                placeholder="Rue 10 x 23, Villa n°5" 
+              />
             </div>
 
-            {/* Coordonnées GPS */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
-                <input 
-                  name="latitude" 
-                  type="number" 
-                  step="any"
-                  value={form.latitude} 
-                  onChange={handleChange}
-                  className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c] font-mono text-xs"
-                  placeholder="14.6937" 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
-                <input 
-                  name="longitude" 
-                  type="number" 
-                  step="any"
-                  value={form.longitude} 
-                  onChange={handleChange}
-                  className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c] font-mono text-xs"
-                  placeholder="-17.4467" 
-                />
-              </div>
+            {/* Carte interactive - toujours visible */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                📍 Cliquez sur la carte pour positionner le bien précisément
+              </label>
+              <InteractiveMap
+                lat={coordinates.lat}
+                lon={coordinates.lon}
+                zoom={14}
+                title={form.titre || 'Position du bien'}
+                onLocationSelect={handleMapClick}
+                showControls={true}
+              />
+              
+              {/* Coordonnées affichées */}
+              {form.latitude && form.longitude && (
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <p className="text-xs text-gray-500">Latitude</p>
+                    <p className="text-sm font-mono text-[#1a3a5c]">{form.latitude}</p>
+                  </div>
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <p className="text-xs text-gray-500">Longitude</p>
+                    <p className="text-sm font-mono text-[#1a3a5c]">{form.longitude}</p>
+                  </div>
+                </div>
+              )}
+              
+              {!mapReady && (
+                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    💡 La carte est centrée sur la commune sélectionnée. <strong>Cliquez sur la carte</strong> pour positionner le bien précisément, ou laissez les coordonnées par défaut.
+                  </p>
+                </div>
+              )}
             </div>
-
-            {/* Carte interactive */}
-            {showMap && form.latitude && form.longitude && (
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Position sur la carte (cliquez pour ajuster)
-                </label>
-                <InteractiveMap
-                  lat={parseFloat(form.latitude)}
-                  lon={parseFloat(form.longitude)}
-                  zoom={15}
-                  title={form.titre || 'Bien immobilier'}
-                  address={form.adresse}
-                  onLocationSelect={handleMapClick}
-                />
-              </div>
-            )}
-
-            {!showMap && form.latitude && form.longitude && (
-              <button
-                type="button"
-                onClick={() => setShowMap(true)}
-                className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-[#1a3a5c] hover:text-[#1a3a5c] transition-colors flex items-center justify-center gap-2"
-              >
-                <MapPin size={16} />
-                Afficher la carte
-              </button>
-            )}
           </div>
 
           {/* Bouton de soumission */}
