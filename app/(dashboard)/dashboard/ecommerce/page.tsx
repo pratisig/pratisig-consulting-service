@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 
 import Link from 'next/link';
-import { Package, ShoppingBag, Plus, Eye, TrendingUp } from 'lucide-react';
+import { Package, ShoppingBag, Plus, Eye, TrendingUp, Edit3 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -108,6 +108,9 @@ export default async function EcommerceDashboardPage() {
                       p.stock > 10 ? 'bg-green-100 text-green-700' : p.stock > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
                     }`}>Stock: {p.stock}</span>
                     <span className="font-bold text-[#e8a020] text-sm">{p.prix.toLocaleString('fr-FR')} F</span>
+                    <Link href={`/dashboard/ecommerce/${p.id}/edit`} className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors" title="Modifier">
+                      <Edit3 size={14} />
+                    </Link>
                   </div>
                 </div>
               ))}
