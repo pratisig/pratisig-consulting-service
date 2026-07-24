@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db/prisma';
 import Link from 'next/link';
-import { ShoppingBag, Search, Tag, Truck } from 'lucide-react';
+import { ShoppingBag, Search, Tag, Truck, ShoppingCart } from 'lucide-react';
+import CartButton from '@/components/boutique/CartButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,18 +58,21 @@ export default async function BoutiquePage({ searchParams }: { searchParams: Pro
       <header className="bg-gradient-to-r from-[#1a3a5c] to-[#0d2440] text-white">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#e8a020] rounded-full flex items-center justify-center font-bold text-white text-lg">P</div>
-              <div>
-                <h1 className="font-bold text-xl">Pratisig Shop</h1>
-                <p className="text-blue-200 text-xs flex items-center gap-1">
-                  <Truck size={12} /> Livraison à Dakar et régions
-                </p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-[#e8a020] rounded-full flex items-center justify-center font-bold text-white text-lg">P</div>
+            <div>
+              <h1 className="font-bold text-xl">Pratisig Shop</h1>
+              <p className="text-blue-200 text-xs flex items-center gap-1">
+                <Truck size={12} /> Livraison à Dakar et régions
+              </p>
             </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <CartButton />
             <Link href="/login" className="text-sm bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition-colors">
               Se connecter
             </Link>
+          </div>
           </div>
 
           {/* Barre de recherche */}
