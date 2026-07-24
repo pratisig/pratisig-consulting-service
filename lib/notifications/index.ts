@@ -1,35 +1,82 @@
-// Système de notifications léger basé sur Server-Sent Events
-// En production, remplacer par Pusher ou Ably pour la scalabilité
+import { prisma } from '@/lib/db/prisma';
 
-export type NotificationEvent =
-  | { type: 'NOUVELLE_COMMANDE'; commandeId: string; total: number }
-  | { type: 'LIVRAISON_ACCEPTEE'; livraisonId: string; livreurNom: string }
-  | { type: 'LIVRAISON_LIVREE'; livraisonId: string }
-  | { type: 'NOUVELLE_TRANSACTION'; transactionId: string; service: string; montant: number }
-  | { type: 'DEMANDE_VISITE'; bienId: string; nomClient: string };
+export type NotificationType = 'INFO' | 'COMMANDE' | 'LIVRAISON' | 'PROMO';
 
-// Store en mémoire des listeners SSE (pour dev, utiliser Redis pub/sub en prod)
-const listeners = new Map<string, ReadableStreamDefaultController[]>();
-
-export function addListener(userId: string, controller: ReadableStreamDefaultController) {
-  const existing = listeners.get(userId) ?? [];
-  listeners.set(userId, [...existing, controller]);
-}
-
-export function removeListener(userId: string, controller: ReadableStreamDefaultController) {
-  const existing = listeners.get(userId) ?? [];
-  listeners.set(userId, existing.filter(c => c !== controller));
-}
-
-export function notifyUser(userId: string, event: NotificationEvent) {
-  const userListeners = listeners.get(userId) ?? [];
-  const data = `data: ${JSON.stringify(event)}\n\n`;
-  for (const controller of userListeners) {
-    try { controller.enqueue(new TextEncoder().encode(data)); } catch {}
+export async function createNotification(
+  userId: string,
+  titre: string,
+  message: string,
+  type: NotificationType = 'INFO',
+  lien?: string
+) {
+  try {
+    await prisma.$executeRaw`
+      INSERT INTO "Notification" ("userId", titre, message, type, lien)
+      VALUES (${userId}, ${titre}, ${message}, ${type}, ${lien || null})
+    `;
+    return true;
+  } catch (error) {
+    console.error('Erreur création notification:', error);
+    return false;
   }
 }
 
-export function notifyRole(role: string, event: NotificationEvent, allUsers: { id: string; role: string }[]) {
-  const targets = allUsers.filter(u => u.role === role);
-  targets.forEach(u => notifyUser(u.id, event));
+export async function notifyNewCommande(
+  clientId: string,
+  commandeId: string,
+  montant: number
+) {
+  return createNotification(
+    clientId,
+    'Commande confirmée',
+    `Votre commande de ${montant.toLocaleString('fr-FR')} FCFA a été enregistrée.`,
+    'COMMANDE',
+    `/dashboard/ecommerce/commandes/${commandeId}`
+  );
+}
+
+export async function notifyLivraisonUpdate(
+  clientId: string,
+  livraisonId: string,
+  statut: string
+) {
+  const messages: Record<string, string> = {
+    ACCEPTEE: 'Un livreur a accepté votre livraison.',
+    EN_ROUTE_COLLECTE: 'Le livreur est en route pour récupérer le colis.',
+    COLLECTE: 'Le colis a été récupéré.',
+    EN_ROUTE_LIVRAISON: 'Le livreur est en route vers la destination.',
+    LIVREE: 'Votre livraison a été effectuée !',
+  };
+
+  return createNotification(
+    clientId,
+    'Mise à jour livraison',
+    messages[statut] || 'Statut de livraison mis à jour.',
+    'LIVRAISON',
+    `/dashboard/livraison/${livraisonId}`
+  );
+}
+
+export async function notifyPromo(userId: string, code: string, reduction: number) {
+  return createNotification(
+    userId,
+    'Nouvelle promotion !',
+    `Utilisez le code ${code} pour obtenir ${reduction}% de réduction.`,
+    'PROMO',
+    '/boutique'
+  );
+}
+
+export async function notifyBienValidated(
+  proprietaireId: string,
+  bienId: string,
+  bienTitre: string
+) {
+  return createNotification(
+    proprietaireId,
+    'Bien publié',
+    `Votre bien "${bienTitre}" a été validé et est maintenant visible.`,
+    'INFO',
+    `/immobilier/${bienId}`
+  );
 }

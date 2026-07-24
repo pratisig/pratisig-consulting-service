@@ -1,91 +1,139 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-import { Bell, X, ShoppingBag, Truck, DollarSign, Home, Calendar } from 'lucide-react';
+
+import { useState, useEffect } from 'react';
+import { Bell, Check, Package, Truck, Tag, Info } from 'lucide-react';
 
 interface Notification {
   id: string;
-  type: string;
+  titre: string;
   message: string;
-  at: Date;
-  read: boolean;
-}
-
-function eventToMessage(event: any): string {
-  switch (event.type) {
-    case 'NOUVELLE_COMMANDE': return `🛒 Nouvelle commande — ${event.total?.toLocaleString('fr-FR')} FCFA`;
-    case 'LIVRAISON_ACCEPTEE': return `🚴 Livraison acceptée par ${event.livreurNom}`;
-    case 'LIVRAISON_LIVREE': return `✅ Livraison effectuée !`;
-    case 'NOUVELLE_TRANSACTION': return `💰 Transaction ${event.service} — ${event.montant?.toLocaleString('fr-FR')} FCFA`;
-    case 'DEMANDE_VISITE': return `🏠 Demande de visite de ${event.nomClient}`;
-    default: return 'Nouvelle notification';
-  }
+  type: string;
+  lu: boolean;
+  lien: string | null;
+  createdAt: string;
 }
 
 export default function NotificationBell() {
-  const [notifs, setNotifs] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const esRef = useRef<EventSource | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    esRef.current = new EventSource('/api/notifications/stream');
-    esRef.current.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        if (data.type === 'CONNECTED') return;
-        setNotifs(prev => [{
-          id: crypto.randomUUID(),
-          type: data.type,
-          message: eventToMessage(data),
-          at: new Date(),
-          read: false,
-        }, ...prev].slice(0, 20));
-      } catch {}
-    };
-    return () => esRef.current?.close();
+    setMounted(true);
+    fetchNotifications();
+    
+    // Rafraîchir toutes les 30 secondes
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
   }, []);
 
-  const unread = notifs.filter(n => !n.read).length;
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch('/api/notifications');
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(data.notifications);
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (error) {
+      console.error('Erreur notifications:', error);
+    }
+  };
 
-  function markAllRead() {
-    setNotifs(prev => prev.map(n => ({ ...n, read: true })));
-  }
+  const markAsRead = async (notificationId?: string) => {
+    try {
+      await fetch('/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationId }),
+      });
+      fetchNotifications();
+    } catch (error) {
+      console.error('Erreur mark as read:', error);
+    }
+  };
+
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'COMMANDE': return <Package size={16} className="text-blue-600" />;
+      case 'LIVRAISON': return <Truck size={16} className="text-green-600" />;
+      case 'PROMO': return <Tag size={16} className="text-orange-600" />;
+      default: return <Info size={16} className="text-gray-600" />;
+    }
+  };
+
+  if (!mounted) return null;
 
   return (
     <div className="relative">
       <button
-        onClick={() => { setIsOpen(!isOpen); if (!isOpen) markAllRead(); }}
-        className="relative p-2 text-blue-200 hover:text-white transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative p-2 hover:bg-white/10 rounded-lg transition-colors"
       >
-        <Bell size={20} />
-        {unread > 0 && (
-          <span className="absolute top-1 right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
-            {unread > 9 ? '9+' : unread}
+        <Bell size={20} className="text-white" />
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+            {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-10 w-80 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden">
-          <div className="flex items-center justify-between p-4 border-b">
-            <h3 className="font-bold text-[#1a3a5c] text-sm">Notifications</h3>
-            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-2xl border z-50 max-h-96 overflow-hidden">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h3 className="font-bold text-[#1a3a5c]">Notifications</h3>
+              {unreadCount > 0 && (
+                <button
+                  onClick={() => markAsRead()}
+                  className="text-xs text-[#1a3a5c] hover:underline"
+                >
+                  Tout marquer comme lu
+                </button>
+              )}
+            </div>
+            
+            <div className="overflow-y-auto max-h-80">
+              {notifications.length === 0 ? (
+                <div className="p-8 text-center text-gray-400">
+                  <Bell size={32} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">Aucune notification</p>
+                </div>
+              ) : (
+                notifications.map((notif) => (
+                  <div
+                    key={notif.id}
+                    onClick={() => markAsRead(notif.id)}
+                    className={`p-4 border-b hover:bg-gray-50 cursor-pointer transition-colors ${
+                      !notif.lu ? 'bg-blue-50' : ''
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      {getIcon(notif.type)}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm text-gray-900">{notif.titre}</p>
+                        <p className="text-xs text-gray-600 mt-1">{notif.message}</p>
+                        <p className="text-xs text-gray-400 mt-2">
+                          {new Date(notif.createdAt).toLocaleDateString('fr-FR', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                      {!notif.lu && (
+                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2" />
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-          <div className="max-h-72 overflow-y-auto divide-y">
-            {notifs.length === 0 ? (
-              <div className="p-6 text-center text-gray-400 text-sm">
-                <Bell size={32} className="mx-auto mb-2 opacity-20" />
-                Aucune notification
-              </div>
-            ) : notifs.map((n) => (
-              <div key={n.id} className={`p-3 text-sm ${n.read ? 'bg-white' : 'bg-blue-50'}`}>
-                <p className="text-[#1a3a5c] font-medium">{n.message}</p>
-                <p className="text-gray-400 text-xs mt-0.5">
-                  {n.at.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
