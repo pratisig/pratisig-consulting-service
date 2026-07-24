@@ -16,7 +16,7 @@ export default function HomePage() {
       titre: 'Transfert d\'Argent',
       description: 'Wave, Orange Money, Yash Money, Kapey – tous vos transferts au même endroit.',
       icon: '💸',
-      href: '/auth/login',
+      href: '/login',
       couleur: 'bg-orange-50 border-orange-200',
     },
     {
@@ -24,7 +24,7 @@ export default function HomePage() {
       titre: 'Alimentation Générale',
       description: 'Gestion de caisse et de stock pour votre commerce de proximité.',
       icon: '🛒',
-      href: '/auth/login',
+      href: '/login',
       couleur: 'bg-green-50 border-green-200',
     },
     {
@@ -66,13 +66,13 @@ export default function HomePage() {
           </nav>
           <div className="flex items-center gap-3">
             <Link
-              href="/auth/login"
+              href="/login"
               className="text-sm border border-white/30 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors"
             >
               Connexion
             </Link>
             <Link
-              href="/auth/register"
+              href="/register"
               className="text-sm bg-[#e8a020] px-4 py-2 rounded-lg hover:bg-[#d4911d] transition-colors font-medium"
             >
               S&apos;inscrire
@@ -98,7 +98,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/auth/register"
+              href="/register"
               className="bg-[#e8a020] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#d4911d] transition-colors flex items-center gap-2 justify-center"
             >
               Commencer gratuitement <ArrowRight size={18} />

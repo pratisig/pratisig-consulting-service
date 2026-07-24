@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function EcommerceDashboardPage() {
   const session = await auth();
-  if (!session) redirect('/auth/login');
+  if (!session) redirect('/login');
   const user = session.user as any;
   if (!hasPermission(user.role, 'ecommerce:manage')) redirect('/auth/unauthorized');
 

@@ -13,7 +13,7 @@ const SERVICES_TRANSFERT = [
 
 export default async function TransfertPage() {
   const session = await auth();
-  if (!session) redirect('/auth/login');
+  if (!session) redirect('/login');
   const role = (session.user as any).role;
   if (!hasPermission(role, 'transfert:operate')) redirect('/auth/unauthorized');
 

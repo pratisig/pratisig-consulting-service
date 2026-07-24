@@ -33,7 +33,7 @@ export default async function BoutiquePage({ searchParams }: { searchParams: Pro
               <p className="text-blue-200 text-xs">Livraison à Dakar</p>
             </div>
           </div>
-          <Link href="/auth/login" className="text-sm text-blue-200 hover:text-white transition-colors">
+          <Link href="/login" className="text-sm text-blue-200 hover:text-white transition-colors">
             Se connecter
           </Link>
         </div>

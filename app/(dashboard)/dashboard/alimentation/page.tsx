@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function AlimentationPage() {
   const session = await auth();
-  if (!session) redirect('/auth/login');
+  if (!session) redirect('/login');
   const user = session.user as any;
   if (!hasPermission(user.role, 'alimentation:sell')) redirect('/auth/unauthorized');
 

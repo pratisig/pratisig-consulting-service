@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function ImmobilierPage() {
   const session = await auth();
-  if (!session) redirect('/auth/login');
+  if (!session) redirect('/login');
   const user = session.user as any;
 
   const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT'].includes(user.role);

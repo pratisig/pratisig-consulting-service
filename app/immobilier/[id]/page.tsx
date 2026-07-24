@@ -77,7 +77,7 @@ export default async function FicheBienPage({ params }: { params: Promise<{ id: 
                 </a>
               )}
             </div>
-            <Link href={`/auth/register`} className="mt-4 block w-full bg-[#1a3a5c] text-white text-center py-3 rounded-xl font-semibold hover:bg-[#0d2440] transition-colors">
+            <Link href={`/register`} className="mt-4 block w-full bg-[#1a3a5c] text-white text-center py-3 rounded-xl font-semibold hover:bg-[#0d2440] transition-colors">
               Faire une demande
             </Link>
           </div>

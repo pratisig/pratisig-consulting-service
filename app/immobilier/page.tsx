@@ -21,7 +21,7 @@ export default async function ImmobilierPage() {
       <header className="bg-[#1a3a5c] text-white px-4 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="font-bold text-lg">Pratisig <span className="text-[#e8a020]">Immobilier</span></Link>
-          <Link href="/auth/login" className="text-sm bg-[#e8a020] px-4 py-2 rounded-lg">
+          <Link href="/login" className="text-sm bg-[#e8a020] px-4 py-2 rounded-lg">
             Publier un bien
           </Link>
         </div>
@@ -38,7 +38,7 @@ export default async function ImmobilierPage() {
           <div className="text-center py-20 text-gray-400">
             <Home size={48} className="mx-auto mb-4 opacity-30" />
             <p>Aucun bien disponible pour le moment.</p>
-            <Link href="/auth/register" className="mt-4 inline-block bg-[#1a3a5c] text-white px-6 py-3 rounded-xl">
+            <Link href="/register" className="mt-4 inline-block bg-[#1a3a5c] text-white px-6 py-3 rounded-xl">
               Publier le premier bien
             </Link>
           </div>

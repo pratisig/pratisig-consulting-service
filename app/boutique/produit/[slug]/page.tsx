@@ -86,7 +86,7 @@ export default async function DetailProduitPage({ params }: { params: Promise<{ 
               }} />
             )}
 
-            <Link href="/auth/login?redirect=/boutique" className="block text-center border-2 border-[#1a3a5c] text-[#1a3a5c] py-3 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors">
+            <Link href="/login?redirect=/boutique" className="block text-center border-2 border-[#1a3a5c] text-[#1a3a5c] py-3 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors">
               Se connecter pour commander
             </Link>
           </div>

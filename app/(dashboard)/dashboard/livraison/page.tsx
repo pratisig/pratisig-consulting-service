@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function LivraisonDashboardPage() {
   const session = await auth();
-  if (!session) redirect('/auth/login');
+  if (!session) redirect('/login');
   const user = session.user as any;
 
   const isLivreur = user.role === 'LIVREUR';

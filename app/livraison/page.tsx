@@ -7,7 +7,7 @@ export default function LivraisonPage() {
       <header className="bg-[#1a3a5c] text-white px-4 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="font-bold text-lg">Pratisig <span className="text-[#e8a020]">Livraison</span></Link>
-          <Link href="/auth/login" className="text-sm bg-[#e8a020] px-4 py-2 rounded-lg">
+          <Link href="/login" className="text-sm bg-[#e8a020] px-4 py-2 rounded-lg">
             Commander
           </Link>
         </div>
@@ -20,13 +20,13 @@ export default function LivraisonPage() {
           <p className="text-blue-100 text-lg mb-8">Envoyez ou recevez vos colis. Rapide, sécurisé, traçable.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/auth/register"
+              href="/register"
               className="bg-[#e8a020] px-8 py-3 rounded-xl font-semibold hover:bg-[#d4911d] transition-colors"
             >
               Demander une livraison
             </Link>
             <Link
-              href="/auth/register?role=livreur"
+              href="/register?role=livreur"
               className="border border-white/30 px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition-colors"
             >
               Devenir livreur

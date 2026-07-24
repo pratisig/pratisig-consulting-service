@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function DetailBienPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  if (!session) redirect('/auth/login');
+  if (!session) redirect('/login');
 
   const { id } = await params;
   const bien = await prisma.bienImmobilier.findUnique({

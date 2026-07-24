@@ -23,7 +23,7 @@ export default function RegisterForm() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -31,7 +31,7 @@ export default function RegisterForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error?.message ?? data.error ?? 'Erreur');
       toast.success('Compte créé ! Vous pouvez vous connecter.');
-      router.push('/auth/login');
+      router.push('/login');
     } catch (err: any) {
       toast.error(err.message);
     } finally {
