@@ -15,7 +15,10 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
     if (!parsed.success) {
-      return Response.json({ error: 'Données invalides', details: parsed.error.flatten() }, { status: 400 });
+      return Response.json(
+        { error: 'Données invalides', details: parsed.error.flatten() },
+        { status: 400 }
+      );
     }
 
     const { name, email, password, phone } = parsed.data;
@@ -25,13 +28,16 @@ export async function POST(req: Request) {
       where: { OR: [{ email }, ...(phone ? [{ phone }] : [])] },
     });
     if (existing) {
-      return Response.json({ error: 'Un compte avec cet email ou téléphone existe déjà' }, { status: 409 });
+      return Response.json(
+        { error: 'Un compte avec cet email ou téléphone existe déjà' },
+        { status: 409 }
+      );
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
+    // Create user in Prisma
     const user = await prisma.user.create({
       data: {
         name,
@@ -39,7 +45,7 @@ export async function POST(req: Request) {
         password: hashedPassword,
         phone: phone || null,
         role: 'CLIENT',
-        status: 'ACTIVE', // Auto-activate; use PENDING + email verification for production
+        status: 'ACTIVE',
       },
       select: {
         id: true,
@@ -51,38 +57,63 @@ export async function POST(req: Request) {
       },
     });
 
-    // Create Supabase auth user if Supabase is configured
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      try {
+    // Try to create Supabase auth user (optional, non-blocking)
+    try {
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
         const { createClient } = await import('@supabase/supabase-js');
         const supabaseAdmin = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL,
           process.env.SUPABASE_SERVICE_ROLE_KEY,
           { auth: { autoRefreshToken: false, persistSession: false } }
         );
-        await supabaseAdmin.auth.admin.createUser({
+        const { error } = await supabaseAdmin.auth.admin.createUser({
           email,
           password,
           email_confirm: true,
           user_metadata: { name, prisma_id: user.id },
         });
-      } catch (e) {
-        console.warn('Supabase user creation failed (non-fatal):', e);
+        if (error) console.warn('Supabase auth user creation warning:', error.message);
       }
+    } catch (e) {
+      console.warn('Supabase auth setup skipped (non-fatal):', e);
     }
 
-    await logAudit({
+    // Log audit
+    try {
+      await logAudit({
+        userId: user.id,
+        action: 'USER_CREATE',
+        entity: 'User',
+        entityId: user.id,
+        ip: req.headers.get('x-forwarded-for') || 'unknown',
+        userAgent: req.headers.get('user-agent') || 'unknown',
+      });
+    } catch (e) {
+      console.warn('Audit log skipped (non-fatal):', e);
+    }
+
+    // Set session cookie
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    cookieStore.set('pratisig_session', JSON.stringify({
       userId: user.id,
-      action: 'USER_CREATE',
-      entity: 'User',
-      entityId: user.id,
-      ip: req.headers.get('x-forwarded-for') || 'unknown',
-      userAgent: req.headers.get('user-agent') || 'unknown',
+      email: user.email,
+      role: user.role,
+      name: user.name,
+    }), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
     });
 
     return Response.json({ user, message: 'Compte créé avec succès' }, { status: 201 });
-  } catch (error) {
-    console.error('Register error:', error);
-    return Response.json({ error: 'Erreur interne du serveur' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Register error:', error?.message || error);
+    return Response.json(
+      { error: error?.message || 'Erreur interne du serveur' },
+      { status: 500 }
+    );
   }
 }
