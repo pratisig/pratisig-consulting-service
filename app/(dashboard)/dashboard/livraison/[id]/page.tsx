@@ -3,8 +3,13 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Package, Clock, User, Phone, Navigation } from 'lucide-react';
 import LivraisonMap from '@/components/livraison/LivraisonMap';
+import StatutModifier from '@/components/livraison/StatutModifier';
+import { getCurrentUser } from '@/lib/auth/session';
 
 export default async function LivraisonDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+  if (!user) notFound();
+  
   const { id } = await params;
   
   const livraison = await prisma.livraison.findUnique({
@@ -17,6 +22,16 @@ export default async function LivraisonDetailPage({ params }: { params: Promise<
   }).catch(() => null);
 
   if (!livraison) notFound();
+
+  // Vérifier les permissions
+  const canView = 
+    user.role === 'SUPER_ADMIN' || 
+    user.role === 'ADMIN' || 
+    user.role === 'MANAGER_LIVRAISON' ||
+    user.role === 'LIVREUR' ||
+    livraison.clientId === user.id;
+
+  if (!canView) notFound();
 
   const STATUT_COLORS: Record<string, string> = {
     EN_ATTENTE: 'bg-yellow-100 text-yellow-700',
@@ -158,6 +173,15 @@ export default async function LivraisonDetailPage({ params }: { params: Promise<
             )}
           </div>
         </div>
+
+        {/* Modifier le statut (pour admins et livreurs) */}
+        {(user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role === 'MANAGER_LIVRAISON' || user.role === 'LIVREUR') && (
+          <StatutModifier
+            livraisonId={livraison.id}
+            statutActuel={livraison.statut}
+            userRole={user.role}
+          />
+        )}
 
         {/* Prix et Description */}
         <div className="bg-white rounded-2xl shadow p-6">

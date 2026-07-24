@@ -1,37 +1,90 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { logAudit } from '@/lib/security/audit';
-import { z } from 'zod';
+import { notifyLivraisonUpdate } from '@/lib/notifications';
 
-const statutSchema = z.object({
-  statut: z.enum(['EN_ROUTE_COLLECTE','COLLECTE','EN_ROUTE_LIVRAISON','LIVREE','ANNULEE']),
-  livreurLat: z.number().optional(),
-  livreurLng: z.number().optional(),
-});
+const STATUTS_VALIDES = [
+  'EN_ATTENTE',
+  'ACCEPTEE',
+  'EN_ROUTE_COLLECTE',
+  'COLLECTE',
+  'EN_ROUTE_LIVRAISON',
+  'LIVREE',
+  'ANNULEE'
+];
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  
-
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;
+  const user = await getCurrentUser();
 
-  const body = await req.json();
-  const parsed = statutSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  if (!user) {
+    return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  }
 
-  const livraison = await prisma.livraison.findUnique({ where: { id } });
-  if (!livraison) return NextResponse.json({ error: 'Non trouvée' }, { status: 404 });
+  // Vérifier les permissions
+  if (!['SUPER_ADMIN', 'ADMIN', 'MANAGER_LIVRAISON', 'LIVREUR'].includes(user.role)) {
+    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  }
 
-  const canUpdate = livraison.livreurId === user.id || ['ADMIN','SUPER_ADMIN','SUPERVISEUR'].includes(user.role);
-  if (!canUpdate) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  try {
+    const body = await req.json();
+    const { statut } = body;
 
-  const updated = await prisma.livraison.update({
-    where: { id },
-    data: { statut: parsed.data.statut, livreurLat: parsed.data.livreurLat, livreurLng: parsed.data.livreurLng },
-  });
+    if (!statut || !STATUTS_VALIDES.includes(statut)) {
+      return NextResponse.json({ error: 'Statut invalide' }, { status: 400 });
+    }
 
-  await logAudit({ userId: user.id, action: `LIVRAISON_${parsed.data.statut}`, entity: 'Livraison', entityId: id });
-  return NextResponse.json(updated);
+    const livraison = await prisma.livraison.findUnique({
+      where: { id },
+    });
+
+    if (!livraison) {
+      return NextResponse.json({ error: 'Livraison non trouvée' }, { status: 404 });
+    }
+
+    // Vérifier les permissions spécifiques
+    if (user.role === 'LIVREUR' && livraison.livreurId !== user.id) {
+      return NextResponse.json({ error: 'Cette livraison ne vous est pas assignée' }, { status: 403 });
+    }
+
+    // Mettre à jour le statut
+    const updated = await prisma.livraison.update({
+      where: { id },
+      data: { statut },
+    });
+
+    // Notifier le client
+    if (statut !== 'EN_ATTENTE') {
+      await notifyLivraisonUpdate(livraison.clientId, id, statut);
+    }
+
+    // Log audit
+    await prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        action: 'LIVRAISON_UPDATE' as any,
+        entity: 'Livraison',
+        entityId: id,
+        metadata: {
+          ancienStatut: livraison.statut,
+          nouveauStatut: statut,
+        },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      livraison: updated,
+      message: 'Statut mis à jour avec succès'
+    });
+  } catch (error: any) {
+    console.error('Erreur mise à jour statut:', error);
+    return NextResponse.json({ 
+      error: 'Erreur serveur',
+      details: error.message 
+    }, { status: 500 });
+  }
 }
