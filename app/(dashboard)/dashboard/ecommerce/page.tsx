@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma';
 
 import Link from 'next/link';
 import { Package, ShoppingBag, Plus, Eye, TrendingUp, Edit3 } from 'lucide-react';
+import GenerateFacture from '@/components/facture/GenerateFacture';
 
 export const dynamic = 'force-dynamic';
 
@@ -81,10 +82,13 @@ export default async function EcommerceDashboardPage() {
                     <p className="font-semibold text-[#1a3a5c] text-sm">{cmd.client?.name ?? cmd.telephoneClient}</p>
                     <p className="text-xs text-gray-400">{new Date(cmd.createdAt).toLocaleDateString('fr-FR')}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUT_COLORS[cmd.statut] ?? 'bg-gray-100'}`}>{cmd.statut.replace('_',' ')}</span>
-                    <span className="font-bold text-[#e8a020] text-sm">{cmd.total.toLocaleString('fr-FR')} F</span>
-                  </div>
+          <div className="flex items-center gap-2">
+            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUT_COLORS[cmd.statut] ?? 'bg-gray-100'}`}>{cmd.statut.replace('_',' ')}</span>
+            <span className="font-bold text-[#e8a020] text-sm">{cmd.total.toLocaleString('fr-FR')} F</span>
+            {['SUPER_ADMIN', 'ADMIN', 'MANAGER_ECOMMERCE'].includes(user?.role || '') && cmd.statut === 'LIVREE' && (
+              <GenerateFacture commandeId={cmd.id} />
+            )}
+          </div>
                 </div>
               ))}
             </div>
