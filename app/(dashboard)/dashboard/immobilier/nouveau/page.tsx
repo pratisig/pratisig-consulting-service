@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Home, MapPin } from 'lucide-react';
+import { Loader2, ArrowLeft, Home, MapPin, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import LocationSelector from '@/components/shared/LocationSelector';
+import ImageUpload from '@/components/shared/ImageUpload';
 import dynamic from 'next/dynamic';
 
 const InteractiveMap = dynamic(() => import('@/components/shared/InteractiveMap'), {
@@ -41,6 +42,7 @@ export default function NouveauBienPage() {
     nbChambres: '', nbSallesDeBain: '',
     adresse: '', region: '', department: '', commune: '', quartier: '',
     latitude: '', longitude: '',
+    images: [] as string[],
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -110,6 +112,7 @@ export default function NouveauBienPage() {
         quartier: form.quartier || undefined,
         latitude: form.latitude ? parseFloat(form.latitude) : undefined,
         longitude: form.longitude ? parseFloat(form.longitude) : undefined,
+        images: form.images,
       };
 
       const res = await fetch('/api/immobilier/biens', {
@@ -248,6 +251,19 @@ export default function NouveauBienPage() {
                 placeholder="Bel appartement bien exposé..." 
               />
             </div>
+          </div>
+
+          {/* Images */}
+          <div className="bg-white rounded-2xl shadow p-6 space-y-4">
+            <h2 className="text-lg font-bold text-[#1a3a5c] flex items-center gap-2">
+              <ImageIcon size={20} /> Photos du bien
+            </h2>
+            <ImageUpload
+              value={form.images}
+              onChange={(urls) => setForm(prev => ({ ...prev, images: urls }))}
+              maxImages={10}
+              folder="immobilier"
+            />
           </div>
 
           {/* Localisation */}

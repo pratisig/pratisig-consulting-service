@@ -336,11 +336,19 @@ model LigneVente {
 // ─── E-COMMERCE ──────────────────────────────────────────────────────────────
 
 model CategorieEcommerce {
-  id       String    @id @default(cuid())
-  nom      String
-  slug     String    @unique
-  image    String?
-  produits Produit[]
+  id              String             @id @default(cuid())
+  nom             String
+  slug            String             @unique
+  description     String?            @db.Text
+  image           String?
+  parentId        String?
+  parent          CategorieEcommerce? @relation("SousCategories", fields: [parentId], references: [id])
+  sousCategories  CategorieEcommerce[] @relation("SousCategories")
+  produits        Produit[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([parentId])
 }
 
 model Produit {

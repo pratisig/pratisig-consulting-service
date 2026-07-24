@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import ImageUpload from '@/components/shared/ImageUpload';
 
 export default function NouveauProduitPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<{ id: string; nom: string }[]>([]);
   const [form, setForm] = useState({
     nom: '',
     description: '',
@@ -16,7 +18,24 @@ export default function NouveauProduitPage() {
     prixPromo: '',
     stock: '0',
     categorieId: '',
+    images: [] as string[],
   });
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/ecommerce/categories');
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (err) {
+      console.error('Erreur chargement catégories:', err);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -38,6 +57,7 @@ export default function NouveauProduitPage() {
           prixPromo: form.prixPromo ? parseFloat(form.prixPromo) : null,
           stock: parseInt(form.stock),
           categorieId: form.categorieId || null,
+          images: form.images,
         }),
       });
 
@@ -119,6 +139,34 @@ export default function NouveauProduitPage() {
               onChange={handleChange}
               required
               className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+            <select
+              name="categorieId"
+              value={form.categorieId}
+              onChange={handleChange}
+              className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+            >
+              <option value="">Aucune catégorie</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.nom}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <ImageIcon size={16} />
+              Images du produit
+            </label>
+            <ImageUpload
+              value={form.images}
+              onChange={(urls) => setForm(prev => ({ ...prev, images: urls }))}
+              maxImages={6}
+              folder="produits"
             />
           </div>
 
