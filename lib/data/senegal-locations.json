@@ -1,0 +1,1369 @@
+{
+  "Dakar": {
+    "name": "Dakar",
+    "code": "SN01",
+    "lat": 14.73908721,
+    "lon": -17.24624135,
+    "departments": {
+      "Dakar": {
+        "name": "Dakar",
+        "code": "SN0101",
+        "lat": 14.71101117,
+        "lon": -17.45951477,
+        "communes": {
+          "Almadies": {
+            "name": "Almadies",
+            "code": "SN010101",
+            "lat": 14.73230998,
+            "lon": -17.49178917,
+            "quartiers": []
+          },
+          "Grand Dakar": {
+            "name": "Grand Dakar",
+            "code": "SN010102",
+            "lat": 14.71173874,
+            "lon": -17.44689991,
+            "quartiers": []
+          },
+          "Parcelles Assainies": {
+            "name": "Parcelles Assainies",
+            "code": "SN010103",
+            "lat": 14.75036318,
+            "lon": -17.44279292,
+            "quartiers": []
+          },
+          "Dakar Plateau": {
+            "name": "Dakar Plateau",
+            "code": "SN010104",
+            "lat": 14.67684685,
+            "lon": -17.44415703,
+            "quartiers": []
+          }
+        },
+        "quartiers": [
+          "Plateau",
+          "Médina",
+          "Grand Dakar",
+          "HLM",
+          "Grand Yoff",
+          "Biscuiterie",
+          "Fann",
+          "Point E",
+          "Mermoz",
+          "Sacré-Cœur"
+        ]
+      },
+      "Guédiawaye": {
+        "name": "Guédiawaye",
+        "code": "SN0102",
+        "lat": 14.77084116,
+        "lon": -17.3972037,
+        "communes": {
+          "Guédiawaye": {
+            "name": "Guédiawaye",
+            "code": "SN010201",
+            "lat": 14.77084116,
+            "lon": -17.3972037,
+            "quartiers": []
+          }
+        }
+      },
+      "Pikine": {
+        "name": "Pikine",
+        "code": "SN0103",
+        "lat": 14.74757204,
+        "lon": -17.35783171,
+        "communes": {
+          "Thiaroye": {
+            "name": "Thiaroye",
+            "code": "SN010302",
+            "lat": 14.74535423,
+            "lon": -17.33743359,
+            "quartiers": []
+          },
+          "Pikine Dagoudane": {
+            "name": "Pikine Dagoudane",
+            "code": "SN010303",
+            "lat": 14.75420345,
+            "lon": -17.39917219,
+            "quartiers": []
+          }
+        }
+      },
+      "Rufisque": {
+        "name": "Rufisque",
+        "code": "SN0104",
+        "lat": 14.73722558,
+        "lon": -17.21494203,
+        "communes": {
+          "Sangalkam": {
+            "name": "Sangalkam",
+            "code": "SN010401",
+            "lat": 14.81024281,
+            "lon": -17.21867147,
+            "quartiers": []
+          },
+          "Rufisque-Est": {
+            "name": "Rufisque-Est",
+            "code": "SN010402",
+            "lat": 14.72391894,
+            "lon": -17.27363741,
+            "quartiers": []
+          },
+          "Diamniadio": {
+            "name": "Diamniadio",
+            "code": "SN010403",
+            "lat": 14.69291254,
+            "lon": -17.1567202,
+            "quartiers": []
+          },
+          "N/A": {
+            "name": "N/A",
+            "code": "SN010404",
+            "lat": 14.70758303,
+            "lon": -17.215483,
+            "quartiers": []
+          }
+        }
+      },
+      "Keur Massar": {
+        "name": "Keur Massar",
+        "code": "SN0105",
+        "lat": 14.78514297,
+        "lon": -17.32503226,
+        "communes": {
+          "Jaxaay": {
+            "name": "Jaxaay",
+            "code": "SN010501",
+            "lat": 14.76472261,
+            "lon": -17.29446645,
+            "quartiers": []
+          },
+          "Malika": {
+            "name": "Malika",
+            "code": "SN010502",
+            "lat": 14.79300723,
+            "lon": -17.32034233,
+            "quartiers": []
+          },
+          "Yeumbeul": {
+            "name": "Yeumbeul",
+            "code": "SN010503",
+            "lat": 14.781249,
+            "lon": -17.35214762,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Diourbel": {
+    "name": "Diourbel",
+    "code": "SN02",
+    "lat": 14.77110611,
+    "lon": -16.02589713,
+    "departments": {
+      "Bambey": {
+        "name": "Bambey",
+        "code": "SN0201",
+        "lat": 14.80943327,
+        "lon": -16.50179927,
+        "communes": {
+          "Lambaye": {
+            "name": "Lambaye",
+            "code": "SN020101",
+            "lat": 14.80544097,
+            "lon": -16.51474525,
+            "quartiers": []
+          },
+          "Ngoye": {
+            "name": "Ngoye",
+            "code": "SN020102",
+            "lat": 14.70760132,
+            "lon": -16.36712975,
+            "quartiers": []
+          },
+          "Baba Garage": {
+            "name": "Baba Garage",
+            "code": "SN020103",
+            "lat": 14.93625462,
+            "lon": -16.52517279,
+            "quartiers": []
+          }
+        }
+      },
+      "Diourbel": {
+        "name": "Diourbel",
+        "code": "SN0202",
+        "lat": 14.78098058,
+        "lon": -16.22581576,
+        "communes": {
+          "Ndoulo": {
+            "name": "Ndoulo",
+            "code": "SN020201",
+            "lat": 14.67085836,
+            "lon": -16.20544876,
+            "quartiers": []
+          },
+          "Ndindy": {
+            "name": "Ndindy",
+            "code": "SN020202",
+            "lat": 14.87926301,
+            "lon": -16.24002141,
+            "quartiers": []
+          }
+        }
+      },
+      "Mbacké": {
+        "name": "Mbacké",
+        "code": "SN0203",
+        "lat": 14.75622179,
+        "lon": -15.77061046,
+        "communes": {
+          "Ndame": {
+            "name": "Ndame",
+            "code": "SN020301",
+            "lat": 14.86207061,
+            "lon": -15.89519577,
+            "quartiers": []
+          },
+          "Taïf": {
+            "name": "Taïf",
+            "code": "SN020302",
+            "lat": 14.74915505,
+            "lon": -15.60467648,
+            "quartiers": []
+          },
+          "Kaèl": {
+            "name": "Kaèl",
+            "code": "SN020303",
+            "lat": 14.65858159,
+            "lon": -15.93614394,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Fatick": {
+    "name": "Fatick",
+    "code": "SN03",
+    "lat": 14.17164855,
+    "lon": -16.5614726,
+    "departments": {
+      "Fatick": {
+        "name": "Fatick",
+        "code": "SN0301",
+        "lat": 14.26878465,
+        "lon": -16.52844162,
+        "communes": {
+          "Ndiob": {
+            "name": "Ndiob",
+            "code": "SN030101",
+            "lat": 14.35690258,
+            "lon": -16.27339832,
+            "quartiers": []
+          },
+          "Fimla": {
+            "name": "Fimla",
+            "code": "SN030102",
+            "lat": 14.14405892,
+            "lon": -16.61143073,
+            "quartiers": []
+          },
+          "Tataguine": {
+            "name": "Tataguine",
+            "code": "SN030103",
+            "lat": 14.40506719,
+            "lon": -16.57337321,
+            "quartiers": []
+          },
+          "Niakhar": {
+            "name": "Niakhar",
+            "code": "SN030104",
+            "lat": 14.47451059,
+            "lon": -16.39276652,
+            "quartiers": []
+          }
+        }
+      },
+      "Foundiougne": {
+        "name": "Foundiougne",
+        "code": "SN0302",
+        "lat": 13.87913438,
+        "lon": -16.47095146,
+        "communes": {
+          "Djilor": {
+            "name": "Djilor",
+            "code": "SN030201",
+            "lat": 14.01696313,
+            "lon": -16.3788779,
+            "quartiers": []
+          },
+          "Toubakouta": {
+            "name": "Toubakouta",
+            "code": "SN030202",
+            "lat": 13.74671281,
+            "lon": -16.4090652,
+            "quartiers": []
+          },
+          "Niodior": {
+            "name": "Niodior",
+            "code": "SN030203",
+            "lat": 13.92738522,
+            "lon": -16.62053665,
+            "quartiers": []
+          }
+        }
+      },
+      "Gossas": {
+        "name": "Gossas",
+        "code": "SN0303",
+        "lat": 14.55891971,
+        "lon": -15.68701348,
+        "communes": {
+          "Colobane": {
+            "name": "Colobane",
+            "code": "SN030301",
+            "lat": 14.56458368,
+            "lon": -15.67545837,
+            "quartiers": []
+          },
+          "Ouadiour": {
+            "name": "Ouadiour",
+            "code": "SN030302",
+            "lat": 14.45622889,
+            "lon": -16.05145154,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Kaffrine": {
+    "name": "Kaffrine",
+    "code": "SN04",
+    "lat": 14.2336392,
+    "lon": -15.2105919,
+    "departments": {
+      "Birkelane": {
+        "name": "Birkelane",
+        "code": "SN0401",
+        "lat": 14.03861392,
+        "lon": -15.69120012,
+        "communes": {
+          "Mabo": {
+            "name": "Mabo",
+            "code": "SN040101",
+            "lat": 13.95021046,
+            "lon": -15.60423463,
+            "quartiers": []
+          },
+          "Keur Mboucki": {
+            "name": "Keur Mboucki",
+            "code": "SN040102",
+            "lat": 14.17397197,
+            "lon": -15.7450854,
+            "quartiers": []
+          }
+        }
+      },
+      "Kaffrine": {
+        "name": "Kaffrine",
+        "code": "SN0402",
+        "lat": 14.16130629,
+        "lon": -15.51647271,
+        "communes": {
+          "Gnibi": {
+            "name": "Gnibi",
+            "code": "SN040201",
+            "lat": 14.31730326,
+            "lon": -15.55491602,
+            "quartiers": []
+          },
+          "Katakel": {
+            "name": "Katakel",
+            "code": "SN040202",
+            "lat": 13.9141451,
+            "lon": -15.31393257,
+            "quartiers": []
+          }
+        }
+      },
+      "Koungheul": {
+        "name": "Koungheul",
+        "code": "SN0403",
+        "lat": 14.23651594,
+        "lon": -14.82694995,
+        "communes": {
+          "Missira Wadène": {
+            "name": "Missira Wadène",
+            "code": "SN040301",
+            "lat": 14.2891926,
+            "lon": -14.94609151,
+            "quartiers": []
+          },
+          "Ida Mouride": {
+            "name": "Ida Mouride",
+            "code": "SN040302",
+            "lat": 13.97417552,
+            "lon": -14.7549643,
+            "quartiers": []
+          },
+          "Lour Escale": {
+            "name": "Lour Escale",
+            "code": "SN040303",
+            "lat": 14.34433685,
+            "lon": -14.72755493,
+            "quartiers": []
+          }
+        }
+      },
+      "Malem-Hodar": {
+        "name": "Malem-Hodar",
+        "code": "SN0404",
+        "lat": 14.35554633,
+        "lon": -15.21514016,
+        "communes": {
+          "Darou Minam 2": {
+            "name": "Darou Minam 2",
+            "code": "SN040401",
+            "lat": 14.46655058,
+            "lon": -15.23513821,
+            "quartiers": []
+          },
+          "Sagna": {
+            "name": "Sagna",
+            "code": "SN040402",
+            "lat": 14.16702183,
+            "lon": -15.25433359,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Kaolack": {
+    "name": "Kaolack",
+    "code": "SN05",
+    "lat": 14.04379892,
+    "lon": -16.01815497,
+    "departments": {
+      "Guinguinéo": {
+        "name": "Guinguinéo",
+        "code": "SN0501",
+        "lat": 14.30405206,
+        "lon": -15.91205896,
+        "communes": {
+          "Mbadakhoune": {
+            "name": "Mbadakhoune",
+            "code": "SN050101",
+            "lat": 14.22397609,
+            "lon": -15.97508458,
+            "quartiers": []
+          },
+          "Nguélou": {
+            "name": "Nguélou",
+            "code": "SN050102",
+            "lat": 14.36085307,
+            "lon": -15.89049192,
+            "quartiers": []
+          }
+        }
+      },
+      "Kaolack": {
+        "name": "Kaolack",
+        "code": "SN0502",
+        "lat": 14.11056513,
+        "lon": -16.09806759,
+        "communes": {
+          "Ngothie": {
+            "name": "Ngothie",
+            "code": "SN050201",
+            "lat": 14.25511222,
+            "lon": -16.24006732,
+            "quartiers": []
+          },
+          "Koumbal": {
+            "name": "Koumbal",
+            "code": "SN050202",
+            "lat": 14.02940677,
+            "lon": -15.91898019,
+            "quartiers": []
+          },
+          "Ndiédiéng": {
+            "name": "Ndiédiéng",
+            "code": "SN050203",
+            "lat": 14.01345562,
+            "lon": -16.16167113,
+            "quartiers": []
+          }
+        }
+      },
+      "Nioro du Rip": {
+        "name": "Nioro du Rip",
+        "code": "SN0503",
+        "lat": 13.74680217,
+        "lon": -15.78852091,
+        "communes": {
+          "Paoscoto": {
+            "name": "Paoscoto",
+            "code": "SN050301",
+            "lat": 13.749419,
+            "lon": -15.81831578,
+            "quartiers": []
+          },
+          "Wak Ngouna": {
+            "name": "Wak Ngouna",
+            "code": "SN050302",
+            "lat": 13.73425574,
+            "lon": -16.05128387,
+            "quartiers": []
+          },
+          "Médina Sabakh": {
+            "name": "Médina Sabakh",
+            "code": "SN050303",
+            "lat": 13.71185603,
+            "lon": -15.55506978,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Kédougou": {
+    "name": "Kédougou",
+    "code": "SN06",
+    "lat": 12.88587329,
+    "lon": -12.28551249,
+    "departments": {
+      "Kédougou": {
+        "name": "Kédougou",
+        "code": "SN0601",
+        "lat": 12.757688,
+        "lon": -12.42893783,
+        "communes": {
+          "Bandafassi": {
+            "name": "Bandafassi",
+            "code": "SN060101",
+            "lat": 12.757688,
+            "lon": -12.42893783,
+            "quartiers": []
+          },
+          "Fongolembi": {
+            "name": "Fongolembi",
+            "code": "SN060102",
+            "lat": 12.54288741,
+            "lon": -11.9776056,
+            "quartiers": []
+          }
+        }
+      },
+      "Salémata": {
+        "name": "Salémata",
+        "code": "SN0602",
+        "lat": 12.60540469,
+        "lon": -12.79724412,
+        "communes": {
+          "Dar Salam": {
+            "name": "Dar Salam",
+            "code": "SN060201",
+            "lat": 12.65454153,
+            "lon": -12.8947002,
+            "quartiers": []
+          },
+          "Dakatéli": {
+            "name": "Dakatéli",
+            "code": "SN060202",
+            "lat": 12.54223982,
+            "lon": -12.65645899,
+            "quartiers": []
+          }
+        }
+      },
+      "Saraya": {
+        "name": "Saraya",
+        "code": "SN0603",
+        "lat": 12.92294659,
+        "lon": -11.79205737,
+        "communes": {
+          "Sabodala": {
+            "name": "Sabodala",
+            "code": "SN060301",
+            "lat": 13.21055227,
+            "lon": -12.01019405,
+            "quartiers": []
+          },
+          "Bembou": {
+            "name": "Bembou",
+            "code": "SN060302",
+            "lat": 12.6908452,
+            "lon": -11.60381625,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Kolda": {
+    "name": "Kolda",
+    "code": "SN07",
+    "lat": 13.12837224,
+    "lon": -14.41647672,
+    "departments": {
+      "Kolda": {
+        "name": "Kolda",
+        "code": "SN0701",
+        "lat": 12.87068559,
+        "lon": -14.47145594,
+        "communes": {
+          "Mampatim": {
+            "name": "Mampatim",
+            "code": "SN070101",
+            "lat": 12.86735525,
+            "lon": -14.51540313,
+            "quartiers": []
+          },
+          "Saré Bidji": {
+            "name": "Saré Bidji",
+            "code": "SN070102",
+            "lat": 12.92579345,
+            "lon": -15.0352647,
+            "quartiers": []
+          },
+          "Dioulacolon": {
+            "name": "Dioulacolon",
+            "code": "SN070103",
+            "lat": 12.79861422,
+            "lon": -14.97505341,
+            "quartiers": []
+          }
+        }
+      },
+      "Médina-Yorofoula": {
+        "name": "Médina-Yorofoula",
+        "code": "SN0702",
+        "lat": 13.23328229,
+        "lon": -14.86054323,
+        "communes": {
+          "Ndorna": {
+            "name": "Ndorna",
+            "code": "SN070201",
+            "lat": 13.12538927,
+            "lon": -14.97219022,
+            "quartiers": []
+          },
+          "Niaming": {
+            "name": "Niaming",
+            "code": "SN070202",
+            "lat": 13.39027835,
+            "lon": -15.0035406,
+            "quartiers": []
+          },
+          "Fafacourou": {
+            "name": "Fafacourou",
+            "code": "SN070203",
+            "lat": 13.13944073,
+            "lon": -14.50522846,
+            "quartiers": []
+          }
+        }
+      },
+      "Vélingara": {
+        "name": "Vélingara",
+        "code": "SN0703",
+        "lat": 13.10298134,
+        "lon": -13.94764115,
+        "communes": {
+          "Bonconto": {
+            "name": "Bonconto",
+            "code": "SN070301",
+            "lat": 13.10304676,
+            "lon": -13.77214617,
+            "quartiers": []
+          },
+          "Pakour": {
+            "name": "Pakour",
+            "code": "SN070302",
+            "lat": 12.79022862,
+            "lon": -13.9911108,
+            "quartiers": []
+          },
+          "Saré Coly Sallé": {
+            "name": "Saré Coly Sallé",
+            "code": "SN070303",
+            "lat": 13.04916827,
+            "lon": -14.13014241,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Louga": {
+    "name": "Louga",
+    "code": "SN08",
+    "lat": 15.39899907,
+    "lon": -15.7386281,
+    "departments": {
+      "Kébémer": {
+        "name": "Kébémer",
+        "code": "SN0801",
+        "lat": 15.31015812,
+        "lon": -16.08062215,
+        "communes": {
+          "Ndande": {
+            "name": "Ndande",
+            "code": "SN080101",
+            "lat": 15.40533178,
+            "lon": -16.58870436,
+            "quartiers": []
+          },
+          "Darou Mousty": {
+            "name": "Darou Mousty",
+            "code": "SN080102",
+            "lat": 15.16586881,
+            "lon": -16.02766674,
+            "quartiers": []
+          },
+          "Sagata Geth": {
+            "name": "Sagata Geth",
+            "code": "SN080103",
+            "lat": 15.34055473,
+            "lon": -16.23040085,
+            "quartiers": []
+          }
+        }
+      },
+      "Linguère": {
+        "name": "Linguère",
+        "code": "SN0802",
+        "lat": 15.31083068,
+        "lon": -15.16767787,
+        "communes": {
+          "Yang-Yang": {
+            "name": "Yang-Yang",
+            "code": "SN080201",
+            "lat": 15.68112516,
+            "lon": -15.31146214,
+            "quartiers": []
+          },
+          "Sagata Diolof": {
+            "name": "Sagata Diolof",
+            "code": "SN080202",
+            "lat": 15.1811771,
+            "lon": -15.580523,
+            "quartiers": []
+          },
+          "Barkédji": {
+            "name": "Barkédji",
+            "code": "SN080203",
+            "lat": 15.02445502,
+            "lon": -15.09781709,
+            "quartiers": []
+          },
+          "Dodji": {
+            "name": "Dodji",
+            "code": "SN080204",
+            "lat": 15.57846455,
+            "lon": -14.93836214,
+            "quartiers": []
+          }
+        }
+      },
+      "Louga": {
+        "name": "Louga",
+        "code": "SN0803",
+        "lat": 15.77578797,
+        "lon": -16.06294916,
+        "communes": {
+          "Keur Momar Sarr": {
+            "name": "Keur Momar Sarr",
+            "code": "SN080301",
+            "lat": 15.81706276,
+            "lon": -15.82539651,
+            "quartiers": []
+          },
+          "Koki": {
+            "name": "Koki",
+            "code": "SN080302",
+            "lat": 15.51103079,
+            "lon": -15.96600737,
+            "quartiers": []
+          },
+          "Mbédiène": {
+            "name": "Mbédiène",
+            "code": "SN080303",
+            "lat": 15.58530454,
+            "lon": -16.19781533,
+            "quartiers": []
+          },
+          "Sakal": {
+            "name": "Sakal",
+            "code": "SN080304",
+            "lat": 15.79267238,
+            "lon": -16.30342306,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Matam": {
+    "name": "Matam",
+    "code": "SN09",
+    "lat": 15.2781068,
+    "lon": -13.67946645,
+    "departments": {
+      "Kanel": {
+        "name": "Kanel",
+        "code": "SN0901",
+        "lat": 15.00999268,
+        "lon": -13.09764109,
+        "communes": {
+          "Ouro Sidi": {
+            "name": "Ouro Sidi",
+            "code": "SN090101",
+            "lat": 15.00999268,
+            "lon": -13.23945183,
+            "quartiers": []
+          },
+          "Orkadiéré": {
+            "name": "Orkadiéré",
+            "code": "SN090102",
+            "lat": 15.0042871,
+            "lon": -12.77480553,
+            "quartiers": []
+          }
+        }
+      },
+      "Matam": {
+        "name": "Matam",
+        "code": "SN0902",
+        "lat": 15.72014838,
+        "lon": -13.67449721,
+        "communes": {
+          "Ogo": {
+            "name": "Ogo",
+            "code": "SN090201",
+            "lat": 15.70088806,
+            "lon": -13.67435099,
+            "quartiers": []
+          },
+          "Agnam Civol": {
+            "name": "Agnam Civol",
+            "code": "SN090202",
+            "lat": 15.93015863,
+            "lon": -13.70403131,
+            "quartiers": []
+          }
+        }
+      },
+      "Ranérou": {
+        "name": "Ranérou",
+        "code": "SN0903",
+        "lat": 15.10769521,
+        "lon": -14.08777171,
+        "communes": {
+          "Vélingara": {
+            "name": "Vélingara",
+            "code": "SN090301",
+            "lat": 15.10769521,
+            "lon": -14.08777171,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Saint-Louis": {
+    "name": "Saint-Louis",
+    "code": "SN10",
+    "lat": 16.09343518,
+    "lon": -14.73403662,
+    "departments": {
+      "Dagana": {
+        "name": "Dagana",
+        "code": "SN1001",
+        "lat": 16.25946543,
+        "lon": -15.88623669,
+        "communes": {
+          "Ndiaye Ngènt": {
+            "name": "Ndiaye Ngènt",
+            "code": "SN100101",
+            "lat": 16.28094707,
+            "lon": -16.07660498,
+            "quartiers": []
+          },
+          "Mbane": {
+            "name": "Mbane",
+            "code": "SN100102",
+            "lat": 16.25997711,
+            "lon": -15.6042297,
+            "quartiers": []
+          }
+        }
+      },
+      "Podor": {
+        "name": "Podor",
+        "code": "SN1002",
+        "lat": 16.09390007,
+        "lon": -14.58223992,
+        "communes": {
+          "Gamadji Sarré": {
+            "name": "Gamadji Sarré",
+            "code": "SN100201",
+            "lat": 16.315075,
+            "lon": -14.6822806,
+            "quartiers": []
+          },
+          "Thillé Boubakar": {
+            "name": "Thillé Boubakar",
+            "code": "SN100202",
+            "lat": 16.33336823,
+            "lon": -15.15479422,
+            "quartiers": []
+          },
+          "Saldé": {
+            "name": "Saldé",
+            "code": "SN100203",
+            "lat": 15.86485804,
+            "lon": -14.17595737,
+            "quartiers": []
+          },
+          "Cas Cas": {
+            "name": "Cas Cas",
+            "code": "SN100204",
+            "lat": 16.1606769,
+            "lon": -14.28346526,
+            "quartiers": []
+          }
+        }
+      },
+      "Saint Louis": {
+        "name": "Saint Louis",
+        "code": "SN1003",
+        "lat": 15.98367683,
+        "lon": -16.33379013,
+        "communes": {
+          "Rao": {
+            "name": "Rao",
+            "code": "SN100301",
+            "lat": 15.98367683,
+            "lon": -16.33379013,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Sédhiou": {
+    "name": "Sédhiou",
+    "code": "SN11",
+    "lat": 12.90939327,
+    "lon": -15.5531073,
+    "departments": {
+      "Bounkiling": {
+        "name": "Bounkiling",
+        "code": "SN1101",
+        "lat": 13.13889935,
+        "lon": -15.5811162,
+        "communes": {
+          "Bona": {
+            "name": "Bona",
+            "code": "SN110101",
+            "lat": 13.05958706,
+            "lon": -15.79811916,
+            "quartiers": []
+          },
+          "Bogal": {
+            "name": "Bogal",
+            "code": "SN110102",
+            "lat": 13.22476674,
+            "lon": -15.52866216,
+            "quartiers": []
+          },
+          "Diaroumé": {
+            "name": "Diaroumé",
+            "code": "SN110103",
+            "lat": 13.0415013,
+            "lon": -15.44750732,
+            "quartiers": []
+          }
+        }
+      },
+      "Goudomp": {
+        "name": "Goudomp",
+        "code": "SN1102",
+        "lat": 12.64470113,
+        "lon": -15.39366179,
+        "communes": {
+          "Simbandi Brassou": {
+            "name": "Simbandi Brassou",
+            "code": "SN110201",
+            "lat": 12.63708389,
+            "lon": -15.40069465,
+            "quartiers": []
+          },
+          "Djibanar": {
+            "name": "Djibanar",
+            "code": "SN110202",
+            "lat": 12.52604411,
+            "lon": -15.69553159,
+            "quartiers": []
+          },
+          "Karantaba": {
+            "name": "Karantaba",
+            "code": "SN110203",
+            "lat": 12.78288179,
+            "lon": -15.33756959,
+            "quartiers": []
+          }
+        }
+      },
+      "Sédhiou": {
+        "name": "Sédhiou",
+        "code": "SN1103",
+        "lat": 12.79402805,
+        "lon": -15.75973213,
+        "communes": {
+          "Diendé": {
+            "name": "Diendé",
+            "code": "SN110301",
+            "lat": 12.87152235,
+            "lon": -15.43597993,
+            "quartiers": []
+          },
+          "Djibabouya": {
+            "name": "Djibabouya",
+            "code": "SN110302",
+            "lat": 12.80155874,
+            "lon": -15.86622527,
+            "quartiers": []
+          },
+          "Djirédji": {
+            "name": "Djirédji",
+            "code": "SN110303",
+            "lat": 12.65719651,
+            "lon": -15.73741783,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Tambacounda": {
+    "name": "Tambacounda",
+    "code": "SN12",
+    "lat": 13.87062965,
+    "lon": -13.32087233,
+    "departments": {
+      "Bakel": {
+        "name": "Bakel",
+        "code": "SN1201",
+        "lat": 14.21232285,
+        "lon": -12.24957025,
+        "communes": {
+          "Kéniéba": {
+            "name": "Kéniéba",
+            "code": "SN120101",
+            "lat": 13.8589933,
+            "lon": -12.14041499,
+            "quartiers": []
+          },
+          "Moudéri": {
+            "name": "Moudéri",
+            "code": "SN120102",
+            "lat": 14.85525862,
+            "lon": -12.50656786,
+            "quartiers": []
+          },
+          "Bellé": {
+            "name": "Bellé",
+            "code": "SN120103",
+            "lat": 14.33210578,
+            "lon": -12.37923186,
+            "quartiers": []
+          }
+        }
+      },
+      "Goudiry": {
+        "name": "Goudiry",
+        "code": "SN1202",
+        "lat": 13.97282721,
+        "lon": -13.01924701,
+        "communes": {
+          "Dianké Makan": {
+            "name": "Dianké Makan",
+            "code": "SN120201",
+            "lat": 13.584523,
+            "lon": -12.68481607,
+            "quartiers": []
+          },
+          "Koular": {
+            "name": "Koular",
+            "code": "SN120202",
+            "lat": 14.28332485,
+            "lon": -13.01442155,
+            "quartiers": []
+          },
+          "Bala": {
+            "name": "Bala",
+            "code": "SN120203",
+            "lat": 13.74754179,
+            "lon": -13.16268321,
+            "quartiers": []
+          },
+          "Bouinguel Bamba": {
+            "name": "Bouinguel Bamba",
+            "code": "SN120204",
+            "lat": 13.9121417,
+            "lon": -12.59956489,
+            "quartiers": []
+          }
+        }
+      },
+      "Koumpentoum": {
+        "name": "Koumpentoum",
+        "code": "SN1203",
+        "lat": 14.08417012,
+        "lon": -14.27821252,
+        "communes": {
+          "Koutiaba Wolof": {
+            "name": "Koutiaba Wolof",
+            "code": "SN120301",
+            "lat": 14.16726103,
+            "lon": -14.27885072,
+            "quartiers": []
+          },
+          "Bamba Tialène": {
+            "name": "Bamba Tialène",
+            "code": "SN120302",
+            "lat": 13.81143192,
+            "lon": -14.56091951,
+            "quartiers": []
+          }
+        }
+      },
+      "Tambacounda": {
+        "name": "Tambacounda",
+        "code": "SN1204",
+        "lat": 13.51982731,
+        "lon": -13.57033485,
+        "communes": {
+          "Missira": {
+            "name": "Missira",
+            "code": "SN120401",
+            "lat": 13.24157222,
+            "lon": -13.04091849,
+            "quartiers": []
+          },
+          "Makacoutibantang": {
+            "name": "Makacoutibantang",
+            "code": "SN120402",
+            "lat": 13.64627238,
+            "lon": -14.04819329,
+            "quartiers": []
+          },
+          "Koussanar": {
+            "name": "Koussanar",
+            "code": "SN120403",
+            "lat": 14.07132062,
+            "lon": -13.82676894,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Thiès": {
+    "name": "Thiès",
+    "code": "SN13",
+    "lat": 14.71109466,
+    "lon": -16.86949533,
+    "departments": {
+      "Mbour": {
+        "name": "Mbour",
+        "code": "SN1301",
+        "lat": 14.37262014,
+        "lon": -16.82700292,
+        "communes": {
+          "Séssène": {
+            "name": "Séssène",
+            "code": "SN130101",
+            "lat": 14.28551696,
+            "lon": -16.79245982,
+            "quartiers": []
+          },
+          "Sindia": {
+            "name": "Sindia",
+            "code": "SN130102",
+            "lat": 14.46835122,
+            "lon": -16.97215449,
+            "quartiers": []
+          },
+          "Fissel": {
+            "name": "Fissel",
+            "code": "SN130103",
+            "lat": 14.56856948,
+            "lon": -16.6631835,
+            "quartiers": []
+          }
+        }
+      },
+      "Thiès": {
+        "name": "Thiès",
+        "code": "SN1302",
+        "lat": 14.7306706,
+        "lon": -16.86834727,
+        "communes": {
+          "Keur Moussa": {
+            "name": "Keur Moussa",
+            "code": "SN130201",
+            "lat": 14.81546783,
+            "lon": -16.93189393,
+            "quartiers": []
+          },
+          "Thiénaba": {
+            "name": "Thiénaba",
+            "code": "SN130202",
+            "lat": 14.78560061,
+            "lon": -16.72966345,
+            "quartiers": []
+          },
+          "Noto": {
+            "name": "Noto",
+            "code": "SN130203",
+            "lat": 14.6403907,
+            "lon": -16.86668106,
+            "quartiers": []
+          }
+        }
+      },
+      "Tivaouane": {
+        "name": "Tivaouane",
+        "code": "SN1303",
+        "lat": 15.08505528,
+        "lon": -16.59177985,
+        "communes": {
+          "Niakhène": {
+            "name": "Niakhène",
+            "code": "SN130301",
+            "lat": 15.15677978,
+            "lon": -16.2936003,
+            "quartiers": []
+          },
+          "Pambal": {
+            "name": "Pambal",
+            "code": "SN130302",
+            "lat": 14.94818179,
+            "lon": -16.88580227,
+            "quartiers": []
+          },
+          "Méouane": {
+            "name": "Méouane",
+            "code": "SN130303",
+            "lat": 15.15171222,
+            "lon": -16.77541495,
+            "quartiers": []
+          },
+          "Mérina Dakhar": {
+            "name": "Mérina Dakhar",
+            "code": "SN130304",
+            "lat": 15.11662855,
+            "lon": -16.48535018,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  },
+  "Ziguinchor": {
+    "name": "Ziguinchor",
+    "code": "SN14",
+    "lat": 12.7546415,
+    "lon": -16.39980293,
+    "departments": {
+      "Bignona": {
+        "name": "Bignona",
+        "code": "SN1401",
+        "lat": 12.86088128,
+        "lon": -16.36958081,
+        "communes": {
+          "Kataba 1": {
+            "name": "Kataba 1",
+            "code": "SN140101",
+            "lat": 12.86272164,
+            "lon": -16.66871324,
+            "quartiers": []
+          },
+          "Tanghori": {
+            "name": "Tanghori",
+            "code": "SN140102",
+            "lat": 12.76107604,
+            "lon": -16.16430825,
+            "quartiers": []
+          },
+          "Tendouck": {
+            "name": "Tendouck",
+            "code": "SN140103",
+            "lat": 12.73040266,
+            "lon": -16.4935642,
+            "quartiers": []
+          },
+          "Sindian": {
+            "name": "Sindian",
+            "code": "SN140104",
+            "lat": 13.00665809,
+            "lon": -16.12723914,
+            "quartiers": []
+          }
+        }
+      },
+      "Oussouye": {
+        "name": "Oussouye",
+        "code": "SN1402",
+        "lat": 12.49399438,
+        "lon": -16.6172984,
+        "communes": {
+          "Loudia Wolof": {
+            "name": "Loudia Wolof",
+            "code": "SN140201",
+            "lat": 12.51005757,
+            "lon": -16.57523512,
+            "quartiers": []
+          },
+          "Cabrousse": {
+            "name": "Cabrousse",
+            "code": "SN140202",
+            "lat": 12.45705853,
+            "lon": -16.7218478,
+            "quartiers": []
+          }
+        }
+      },
+      "Ziguinchor": {
+        "name": "Ziguinchor",
+        "code": "SN1403",
+        "lat": 12.50931294,
+        "lon": -16.20164122,
+        "communes": {
+          "Niaguis": {
+            "name": "Niaguis",
+            "code": "SN140301",
+            "lat": 12.55005868,
+            "lon": -16.14199417,
+            "quartiers": []
+          },
+          "Niassia": {
+            "name": "Niassia",
+            "code": "SN140302",
+            "lat": 12.49073116,
+            "lon": -16.3582611,
+            "quartiers": []
+          }
+        }
+      }
+    }
+  }
+}

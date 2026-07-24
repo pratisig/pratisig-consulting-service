@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MapPin, Home, BedDouble, Bath, Ruler, ArrowLeft, Phone } from 'lucide-react';
+import BienMap from '@/components/immobilier/BienMap';
 
 export default async function FicheBienPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -11,6 +12,8 @@ export default async function FicheBienPage({ params }: { params: Promise<{ id: 
   }).catch(() => null);
 
   if (!bien) notFound();
+
+  const fullAddress = [bien.adresse, bien.quartier, bien.ville].filter(Boolean).join(', ');
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -44,7 +47,7 @@ export default async function FicheBienPage({ params }: { params: Promise<{ id: 
           <div className="bg-white rounded-2xl p-6">
             <h1 className="text-2xl font-bold text-[#1a3a5c] mb-2">{bien.titre}</h1>
             <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
-              <MapPin size={14} /> {bien.adresse}, {bien.ville}{bien.quartier ? ` — ${bien.quartier}` : ''}
+              <MapPin size={14} /> {fullAddress}
             </div>
             <div className="flex flex-wrap gap-3 mb-6">
               {bien.surface && <span className="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full text-sm"><Ruler size={14} />{bien.surface} m²</span>}
@@ -82,12 +85,12 @@ export default async function FicheBienPage({ params }: { params: Promise<{ id: 
             </Link>
           </div>
           {bien.latitude && bien.longitude && (
-            <div className="bg-white rounded-2xl p-4 shadow">
-              <p className="font-semibold text-[#1a3a5c] mb-2 text-sm">📍 Localisation</p>
-              <div className="bg-slate-100 rounded-xl h-40 flex items-center justify-center text-gray-400 text-xs">
-                Carte : {bien.latitude.toFixed(4)}, {bien.longitude.toFixed(4)}
-              </div>
-            </div>
+            <BienMap
+              lat={bien.latitude}
+              lon={bien.longitude}
+              title={bien.titre}
+              address={fullAddress}
+            />
           )}
         </div>
       </div>
