@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 
 export async function GET() {
   const articles = await prisma.articleAlimentation.findMany({
@@ -13,10 +13,10 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'alimentation:manage')) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_ALIMENTATION'].includes(user.role)) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const body = await req.json();
   const article = await prisma.articleAlimentation.create({ data: body });

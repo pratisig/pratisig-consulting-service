@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
 import { transactionSchema } from '@/lib/validation/transfert';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import { logAudit } from '@/lib/security/audit';
 import { rateLimit } from '@/lib/security/rate-limit';
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'transfert:operate')) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_TRANSFERT','AGENT'].includes(user.role)) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const { searchParams } = new URL(req.url);
   const page = parseInt(searchParams.get('page') ?? '1');
   const perPage = 20;
 
-  const where = hasPermission(user.role, 'transfert:supervise') ? {} : { agentId: user.id };
+  const where = ['SUPER_ADMIN','ADMIN','MANAGER_TRANSFERT'].includes(user.role) ? {} : { agentId: user.id };
 
   const [transactions, total] = await Promise.all([
     prisma.transaction.findMany({
@@ -33,10 +33,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'transfert:operate')) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_TRANSFERT','AGENT'].includes(user.role)) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const ip = req.headers.get('x-forwarded-for') ?? 'unknown';
   if (!rateLimit(`transfert:${user.id}`, 100, 3_600_000)) {

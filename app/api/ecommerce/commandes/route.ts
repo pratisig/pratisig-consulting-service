@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
 import { commandeSchema } from '@/lib/validation/ecommerce';
 import { rateLimit } from '@/lib/security/rate-limit';
 import { logAudit } from '@/lib/security/audit';
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Connexion requise pour commander' }, { status: 401 });
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Connexion requise pour commander' }, { status: 401 });
+  
 
   const ip = req.headers.get('x-forwarded-for') ?? 'unknown';
   if (!rateLimit(`commande:${ip}`, 10, 3_600_000)) {
@@ -67,9 +67,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
 
   const commandes = await prisma.commande.findMany({
     where: user.role === 'CLIENT' ? { clientId: user.id } : {},

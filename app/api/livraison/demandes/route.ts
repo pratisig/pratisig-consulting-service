@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
 import { livraisonSchema } from '@/lib/validation/livraison';
 import { rateLimit } from '@/lib/security/rate-limit';
 import { logAudit } from '@/lib/security/audit';
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Connexion requise' }, { status: 401 });
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Connexion requise' }, { status: 401 });
+  
 
   const ip = req.headers.get('x-forwarded-for') ?? 'unknown';
   if (!rateLimit(`livraison:${ip}`, 20, 3_600_000)) {
@@ -30,9 +30,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
 
   const where = user.role === 'LIVREUR' ? { statut: 'EN_ATTENTE' as const } :
     ['ADMIN','SUPER_ADMIN','SUPERVISEUR'].includes(user.role) ? {} :

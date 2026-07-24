@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import { logAudit } from '@/lib/security/audit';
 import { z } from 'zod';
 
@@ -43,10 +43,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'immobilier:publish')) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_IMMOBILIER'].includes(user.role)) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const body = await req.json();
   const parsed = bienSchema.safeParse(body);

@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { addListener, removeListener } from '@/lib/notifications';
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session) return new Response('Non authentifié', { status: 401 });
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) return new Response('Non authentifié', { status: 401 });
+  
 
   const stream = new ReadableStream({
     start(controller) {

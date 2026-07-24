@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import { logAudit } from '@/lib/security/audit';
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -15,15 +15,15 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
 
   const { id } = await params;
   const bien = await prisma.bienImmobilier.findUnique({ where: { id } });
   if (!bien) return NextResponse.json({ error: 'Non trouvé' }, { status: 404 });
 
-  const canEdit = hasPermission(user.role, 'immobilier:manage') || bien.proprietaireId === user.id;
+  const canEdit = ['SUPER_ADMIN','ADMIN','MANAGER_IMMOBILIER'].includes(user.role) || bien.proprietaireId === user.id;
   if (!canEdit) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const body = await req.json();
@@ -33,10 +33,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'immobilier:manage')) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_IMMOBILIER'].includes(user.role)) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const { id } = await params;
   await prisma.bienImmobilier.delete({ where: { id } });
