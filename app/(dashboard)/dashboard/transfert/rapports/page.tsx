@@ -1,17 +1,17 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import { ArrowLeft, TrendingUp, DollarSign, Activity } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 export default async function RapportsTransfertPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'transfert:reports')) redirect('/auth/unauthorized');
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_TRANSFERT'].includes(user.role)) redirect('/dashboard');
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

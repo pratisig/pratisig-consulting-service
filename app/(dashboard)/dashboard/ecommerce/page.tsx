@@ -1,17 +1,17 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import Link from 'next/link';
 import { Package, ShoppingBag, Plus, Eye, TrendingUp } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function EcommerceDashboardPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'ecommerce:manage')) redirect('/auth/unauthorized');
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_ECOMMERCE'].includes(user.role)) redirect('/dashboard');
 
   const [produits, commandes, statsCommandes] = await Promise.all([
     prisma.produit.findMany({ where: { isActive: true }, include: { categorie: true }, orderBy: { createdAt: 'desc' }, take: 20 }),

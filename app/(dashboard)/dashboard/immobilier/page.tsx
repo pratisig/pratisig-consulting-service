@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 import Link from 'next/link';
@@ -7,9 +7,9 @@ import { Home, Plus, MapPin, Eye } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export default async function ImmobilierPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  
 
   const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT'].includes(user.role);
   const isProprietaire = user.role === 'PROPRIETAIRE';

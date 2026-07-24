@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 import { notFound } from 'next/navigation';
@@ -8,8 +8,8 @@ import { ArrowLeft, MapPin, BedDouble, Bath, Maximize2, Phone, Mail, Calendar } 
 export const dynamic = 'force-dynamic';
 
 export default async function DetailBienPage({ params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) redirect('/login');
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
 
   const { id } = await params;
   const bien = await prisma.bienImmobilier.findUnique({
@@ -21,7 +21,6 @@ export default async function DetailBienPage({ params }: { params: Promise<{ id:
   });
   if (!bien) notFound();
 
-  const user = (session.user as any);
   const isOwner = bien.proprietaireId === user.id;
   const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT'].includes(user.role);
 

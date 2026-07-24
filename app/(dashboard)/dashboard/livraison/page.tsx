@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 import Link from 'next/link';
@@ -7,9 +7,9 @@ import { MapPin, Package, Clock, Plus, Truck } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export default async function LivraisonDashboardPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const user = session.user as any;
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  
 
   const isLivreur = user.role === 'LIVREUR';
   const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'SUPERVISEUR'].includes(user.role);

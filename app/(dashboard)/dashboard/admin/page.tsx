@@ -1,17 +1,17 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import Link from 'next/link';
 import { Users, Activity, Shield, Database } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'admin:access')) redirect('/auth/unauthorized');
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  
+  if (!['SUPER_ADMIN','ADMIN'].includes(user.role)) redirect('/dashboard');
 
   const [totalUsers, usersByRole, recentAuditLogs] = await Promise.all([
     prisma.user.count(),

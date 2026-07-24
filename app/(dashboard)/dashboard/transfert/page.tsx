@@ -1,6 +1,6 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
-import { hasPermission } from '@/lib/auth/rbac';
+
 
 const SERVICES_TRANSFERT = [
   { id: 'WAVE', nom: 'Wave', couleur: '#1B9BF0', emoji: '🌊', description: 'Transfert Wave Sénégal' },
@@ -12,10 +12,10 @@ const SERVICES_TRANSFERT = [
 ];
 
 export default async function TransfertPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const role = (session.user as any).role;
-  if (!hasPermission(role, 'transfert:operate')) redirect('/auth/unauthorized');
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  const role = user.role;
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_TRANSFERT','AGENT'].includes(user.role)) redirect('/dashboard');
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">

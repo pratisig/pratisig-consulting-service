@@ -1,17 +1,17 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import { ArrowLeft, UserCheck, UserX } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 export default async function GestionUtilisateursPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'admin:users')) redirect('/auth/unauthorized');
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  
+  if (!['SUPER_ADMIN','ADMIN'].includes(user.role)) redirect('/dashboard');
 
   const users = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },

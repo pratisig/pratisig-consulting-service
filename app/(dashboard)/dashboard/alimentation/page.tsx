@@ -1,17 +1,17 @@
-import { auth } from '@/lib/auth/config';
+import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
-import { hasPermission } from '@/lib/auth/rbac';
+
 import Link from 'next/link';
 import { ShoppingCart, Package, Plus, TrendingUp } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AlimentationPage() {
-  const session = await auth();
-  if (!session) redirect('/login');
-  const user = session.user as any;
-  if (!hasPermission(user.role, 'alimentation:sell')) redirect('/auth/unauthorized');
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  
+  if (!['SUPER_ADMIN','ADMIN','MANAGER_ALIMENTATION','CAISSIER'].includes(user.role)) redirect('/dashboard');
 
   const today = new Date(); today.setHours(0,0,0,0);
 
@@ -33,7 +33,7 @@ export default async function AlimentationPage() {
             <Link href="/dashboard/alimentation/caisse" className="bg-[#e8a020] text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#d4911d] transition-colors">
               <ShoppingCart size={16} /> Ouvrir la caisse
             </Link>
-            {hasPermission(user.role, 'alimentation:manage') && (
+            {['SUPER_ADMIN','ADMIN','MANAGER_ALIMENTATION'].includes(user.role) && (
               <Link href="/dashboard/alimentation/articles/nouveau" className="bg-[#1a3a5c] text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#0d2440] transition-colors">
                 <Plus size={16} /> Nouvel article
               </Link>
