@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/auth-context';
 import {
   LayoutDashboard, Users, Shield, Activity, Building2, ShoppingBag,
-  Truck, Wallet, UtensilsCrossed, Settings, LogOut, ChevronDown, FileCheck, User, Trash2
+  Truck, Wallet, UtensilsCrossed, Settings, LogOut, ChevronDown, FileCheck, User, Trash2, TrendingUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ROLE_LABELS } from '@/lib/auth/permissions';
@@ -18,6 +18,7 @@ const navItems = [
   { href: '/admin/utilisateurs', label: 'Utilisateurs', icon: Users, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/immobilier', label: 'Validation biens', icon: FileCheck, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/ecommerce', label: 'E-commerce Admin', icon: ShoppingBag, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER_ECOMMERCE'] },
+  { href: '/dashboard/analytics', label: 'Analytics', icon: TrendingUp, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/audit', label: 'Journal d\'audit', icon: Activity, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/dashboard/immobilier', label: 'Immobilier', icon: Building2, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER_IMMOBILIER', 'PROPRIETAIRE', 'CLIENT'] },
   { href: '/dashboard/profil', label: 'Mon profil', icon: User, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER_IMMOBILIER', 'MANAGER_ECOMMERCE', 'MANAGER_LIVRAISON', 'MANAGER_TRANSFERT', 'MANAGER_ALIMENTATION', 'AGENT', 'CAISSIER', 'LIVREUR', 'PROPRIETAIRE', 'CLIENT'] },
