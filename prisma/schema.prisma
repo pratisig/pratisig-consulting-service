@@ -172,6 +172,7 @@ model User {
   email         String      @unique
   emailVerified DateTime?
   phone         String?     @unique
+  whatsapp      String?
   password      String?
   image         String?
   role          Role        @default(CLIENT)
@@ -452,6 +453,7 @@ model BienImmobilier {
   longitude      Float?
   images         String[]      @default([])
   isActive       Boolean       @default(true)
+  isPublished    Boolean       @default(false)
   proprietaireId String
   proprietaire   User          @relation("ProprietaireBien", fields: [proprietaireId], references: [id])
   createdAt      DateTime      @default(now())

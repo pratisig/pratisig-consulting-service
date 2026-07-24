@@ -123,7 +123,7 @@ export default function NouveauBienPage() {
         throw new Error(typeof data.error === 'string' ? data.error : 'Erreur lors de la création du bien');
       }
       
-      toast.success('Bien ajouté avec succès !');
+      toast.success('Bien soumis avec succès ! Il sera visible après validation par un administrateur.');
       router.push('/dashboard/immobilier');
     } catch (err: unknown) { 
       toast.error(getErrorMessage(err)); 

@@ -11,12 +11,12 @@ export default async function ImmobilierPage() {
   
   try {
     biens = await prisma.bienImmobilier.findMany({
-      where: { isActive: true, statut: 'DISPONIBLE' },
+      where: { isActive: true, isPublished: true, statut: 'DISPONIBLE' },
       orderBy: { createdAt: 'desc' },
       take: 30,
       include: {
         proprietaire: {
-          select: { name: true, phone: true, email: true }
+          select: { name: true, phone: true, email: true, whatsapp: true }
         }
       }
     });

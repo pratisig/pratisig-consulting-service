@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
   const biens = await prisma.bienImmobilier.findMany({
     where: {
       isActive: true,
+      isPublished: true,
       statut: 'DISPONIBLE',
       ...(type && { type: type as any }),
       ...(ville && { ville }),
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
     },
     orderBy: { createdAt: 'desc' },
     take: 50,
-    include: { proprietaire: { select: { name: true, phone: true } } },
+    include: { proprietaire: { select: { name: true, phone: true, whatsapp: true, email: true } } },
   });
   return NextResponse.json(biens);
 }
@@ -45,16 +46,28 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-  
-  if (!['SUPER_ADMIN','ADMIN','MANAGER_IMMOBILIER'].includes(user.role)) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
 
   const body = await req.json();
   const parsed = bienSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
+  // Admins peuvent publier directement, les autres biens sont en attente de validation
+  const isPublished = ['SUPER_ADMIN', 'ADMIN'].includes(user.role);
+
   const bien = await prisma.bienImmobilier.create({
-    data: { ...parsed.data, proprietaireId: user.id },
+    data: { 
+      ...parsed.data, 
+      proprietaireId: user.id,
+      isPublished,
+    },
   });
-  await logAudit({ userId: user.id, action: 'BIEN_CREATE', entity: 'BienImmobilier', entityId: bien.id });
+  
+  await logAudit({ 
+    userId: user.id, 
+    action: 'BIEN_CREATE', 
+    entity: 'BienImmobilier', 
+    entityId: bien.id 
+  });
+  
   return NextResponse.json(bien, { status: 201 });
 }
