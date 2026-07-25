@@ -80,10 +80,17 @@ export default async function ImmobilierPage() {
                         <Edit3 size={14} />
                       </Link>
                     )}
-                    <Link href={`/dashboard/immobilier/${bien.id}`} className="flex items-center gap-1 text-xs text-[#1a3a5c] hover:text-[#e8a020] transition-colors">
-                      <Eye size={14} />
-                      {bien._count.demandesVisite} visite(s)
-                    </Link>
+                    {isAdmin || isProprietaire ? (
+                      <Link href={`/dashboard/immobilier/${bien.id}`} className="flex items-center gap-1 text-xs text-[#1a3a5c] hover:text-[#e8a020] transition-colors">
+                        <Eye size={14} />
+                        {bien._count.demandesVisite} visite(s)
+                      </Link>
+                    ) : (
+                      <Link href={`/immobilier/${bien.id}`} className="flex items-center gap-1 text-xs text-[#1a3a5c] hover:text-[#e8a020] transition-colors">
+                        <Eye size={14} />
+                        Voir détails
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

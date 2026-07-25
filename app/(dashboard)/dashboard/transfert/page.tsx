@@ -1,5 +1,7 @@
 import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { Plus, TrendingUp } from 'lucide-react';
 
 
 const SERVICES_TRANSFERT = [
@@ -20,24 +22,39 @@ export default async function TransfertPage() {
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-bold text-[#1a3a5c] mb-2">Transfert d&apos;Argent</h1>
-        <p className="text-gray-500 mb-8">Sélectionnez le service de transfert</p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-[#1a3a5c] mb-2">Transfert d&apos;Argent</h1>
+            <p className="text-gray-500">Sélectionnez le service de transfert</p>
+          </div>
+          <div className="flex gap-3">
+            <Link href="/dashboard/transfert/nouvelle" className="bg-[#1a3a5c] text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#0d2440] transition-colors">
+              <Plus size={16} /> Nouvelle opération
+            </Link>
+            {['SUPER_ADMIN','ADMIN','MANAGER_TRANSFERT'].includes(user.role) && (
+              <Link href="/dashboard/transfert/rapports" className="border border-[#1a3a5c] text-[#1a3a5c] px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-slate-100 transition-colors">
+                <TrendingUp size={16} /> Rapports
+              </Link>
+            )}
+          </div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {SERVICES_TRANSFERT.map((s) => (
-            <div
+            <Link
               key={s.id}
-              className="bg-white border-2 border-slate-100 rounded-2xl p-6 hover:shadow-lg cursor-pointer transition-all hover:border-[#1a3a5c] text-center"
+              href="/dashboard/transfert/nouvelle"
+              className="bg-white border-2 border-slate-100 rounded-2xl p-6 hover:shadow-lg transition-all hover:border-[#1a3a5c] text-center group"
             >
               <div className="text-5xl mb-3">{s.emoji}</div>
               <p className="font-bold text-lg" style={{ color: s.couleur }}>{s.nom}</p>
               <p className="text-gray-400 text-xs mt-1">{s.description}</p>
-              <button
-                className="mt-4 w-full py-2 rounded-xl text-white text-sm font-semibold transition-opacity hover:opacity-90"
+              <div
+                className="mt-4 w-full py-2 rounded-xl text-white text-sm font-semibold transition-opacity group-hover:opacity-90"
                 style={{ backgroundColor: s.couleur }}
               >
                 Nouvelle opération
-              </button>
-            </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
