@@ -12,6 +12,11 @@ export default async function EcommerceDashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
   
+  // Rediriger les clients vers leurs commandes
+  if (user.role === 'CLIENT') {
+    redirect('/dashboard/ecommerce/mes-commandes');
+  }
+  
   if (!['SUPER_ADMIN','ADMIN','MANAGER_ECOMMERCE'].includes(user.role)) redirect('/dashboard');
 
   const [produits, commandes, statsCommandes] = await Promise.all([
