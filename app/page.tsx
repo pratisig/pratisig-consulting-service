@@ -2,49 +2,6 @@ import Link from 'next/link';
 import { MapPin, ArrowRight, Shield, Zap, Globe } from 'lucide-react';
 
 export default function HomePage() {
-  const services = [
-    {
-      id: 'immobilier',
-      titre: 'Gestion Immobilière',
-      description: 'Achetez, louez ou mettez en gérance vos biens immobiliers à Dakar et au Sénégal.',
-      icon: '🏠',
-      href: '/immobilier',
-      couleur: 'bg-blue-50 border-blue-200',
-    },
-    {
-      id: 'transfert',
-      titre: 'Transfert d\'Argent',
-      description: 'Wave, Orange Money, Yash Money, Kapey – tous vos transferts au même endroit.',
-      icon: '💸',
-      href: '/login',
-      couleur: 'bg-orange-50 border-orange-200',
-    },
-    {
-      id: 'alimentation',
-      titre: 'Alimentation Générale',
-      description: 'Gestion de caisse et de stock pour votre commerce de proximité.',
-      icon: '🛒',
-      href: '/login',
-      couleur: 'bg-green-50 border-green-200',
-    },
-    {
-      id: 'ecommerce',
-      titre: 'Boutique En Ligne',
-      description: 'Découvrez notre boutique et commandez en toute sécurité avec Wave ou Orange Money.',
-      icon: '🛍️',
-      href: '/boutique',
-      couleur: 'bg-purple-50 border-purple-200',
-    },
-    {
-      id: 'livraison',
-      titre: 'Service de Livraison',
-      description: 'Livraison rapide à Dakar. Suivez votre livreur en temps réel.',
-      icon: '🚀',
-      href: '/livraison',
-      couleur: 'bg-red-50 border-red-200',
-    },
-  ];
-
   return (
     <main className="min-h-screen bg-slate-50">
       {/* HEADER */}
@@ -63,6 +20,7 @@ export default function HomePage() {
             <Link href="/immobilier" className="hover:text-[#e8a020] transition-colors">Immobilier</Link>
             <Link href="/boutique" className="hover:text-[#e8a020] transition-colors">Boutique</Link>
             <Link href="/livraison" className="hover:text-[#e8a020] transition-colors">Livraison</Link>
+            <Link href="/dashboard" className="hover:text-[#e8a020] transition-colors">Dashboard</Link>
           </nav>
           <div className="flex items-center gap-3">
             <Link
@@ -94,7 +52,11 @@ export default function HomePage() {
             <br />au Sénégal
           </h2>
           <p className="text-blue-100 text-lg mb-10 max-w-2xl mx-auto">
-            Immobilier, transfert d&apos;argent, alimentation, e-commerce et livraison — tout en un, sécurisé et simple.
+            Immobilier, e-commerce et livraison — tout en un, sécurisé et simple.
+            <br />
+            <span className="text-sm text-blue-200">
+              Transfert d&apos;argent et Alimentation accessibles aux gestionnaires autorisés.
+            </span>
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -113,24 +75,74 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SERVICES */}
+      {/* SERVICES PUBLICS */}
       <section className="max-w-7xl mx-auto px-4 py-16">
-        <h3 className="text-2xl font-bold text-center text-[#1a3a5c] mb-2">Nos Services</h3>
-        <p className="text-gray-500 text-center mb-10">Une solution complète pour votre quotidien</p>
+        <h3 className="text-2xl font-bold text-center text-[#1a3a5c] mb-2">Nos Services Publics</h3>
+        <p className="text-gray-500 text-center mb-4">Services accessibles à tous</p>
+        <p className="text-xs text-gray-400 text-center mb-10">
+          💼 Transfert d&apos;argent et Alimentation : accessibles uniquement depuis le Dashboard après connexion
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((s) => (
+          <Link
+            href="/immobilier"
+            className="border-2 bg-blue-50 border-blue-200 rounded-2xl p-6 hover:shadow-lg transition-all group"
+          >
+            <div className="text-4xl mb-4"></div>
+            <h4 className="font-bold text-lg text-[#1a3a5c] mb-2 group-hover:text-[#e8a020] transition-colors">
+              Gestion Immobilière
+            </h4>
+            <p className="text-gray-600 text-sm leading-relaxed">Achetez, louez ou mettez en gérance vos biens immobiliers à Dakar et au Sénégal.</p>
+          </Link>
+          <Link
+            href="/boutique"
+            className="border-2 bg-purple-50 border-purple-200 rounded-2xl p-6 hover:shadow-lg transition-all group"
+          >
+            <div className="text-4xl mb-4">🛍️</div>
+            <h4 className="font-bold text-lg text-[#1a3a5c] mb-2 group-hover:text-[#e8a020] transition-colors">
+              Boutique En Ligne
+            </h4>
+            <p className="text-gray-600 text-sm leading-relaxed">Découvrez notre boutique et commandez en toute sécurité avec Wave ou Orange Money.</p>
+          </Link>
+          <Link
+            href="/livraison"
+            className="border-2 bg-red-50 border-red-200 rounded-2xl p-6 hover:shadow-lg transition-all group"
+          >
+            <div className="text-4xl mb-4"></div>
+            <h4 className="font-bold text-lg text-[#1a3a5c] mb-2 group-hover:text-[#e8a020] transition-colors">
+              Service de Livraison
+            </h4>
+            <p className="text-gray-600 text-sm leading-relaxed">Livraison rapide à Dakar. Suivez votre livreur en temps réel.</p>
+          </Link>
+        </div>
+      </section>
+
+      {/* SERVICES PRIVÉS */}
+      <section className="bg-gray-100 py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-2xl font-bold text-center text-[#1a3a5c] mb-2">Services Professionnels</h3>
+          <p className="text-gray-500 text-center mb-10">Accessibles aux gestionnaires autorisés via le Dashboard</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="border-2 bg-orange-50 border-orange-200 rounded-2xl p-6 opacity-75">
+              <div className="text-4xl mb-4">💸</div>
+              <h4 className="font-bold text-lg text-[#1a3a5c] mb-2">Transfert d&apos;Argent</h4>
+              <p className="text-gray-600 text-sm leading-relaxed">Wave, Orange Money, Yash Money, Kapey – gestion des transferts.</p>
+              <p className="text-xs text-orange-600 mt-3 font-medium"> Réservé aux Managers Transfert</p>
+            </div>
+            <div className="border-2 bg-green-50 border-green-200 rounded-2xl p-6 opacity-75">
+              <div className="text-4xl mb-4">🛒</div>
+              <h4 className="font-bold text-lg text-[#1a3a5c] mb-2">Alimentation Générale</h4>
+              <p className="text-gray-600 text-sm leading-relaxed">Gestion de caisse et de stock pour votre commerce.</p>
+              <p className="text-xs text-green-600 mt-3 font-medium">🔒 Réservé aux Managers Alimentation</p>
+            </div>
+          </div>
+          <div className="text-center mt-8">
             <Link
-              key={s.id}
-              href={s.href}
-              className={`border-2 ${s.couleur} rounded-2xl p-6 hover:shadow-lg transition-all group`}
+              href="/dashboard"
+              className="inline-block bg-[#1a3a5c] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#0d2440] transition-colors"
             >
-              <div className="text-4xl mb-4">{s.icon}</div>
-              <h4 className="font-bold text-lg text-[#1a3a5c] mb-2 group-hover:text-[#e8a020] transition-colors">
-                {s.titre}
-              </h4>
-              <p className="text-gray-600 text-sm leading-relaxed">{s.description}</p>
+              Accéder au Dashboard →
             </Link>
-          ))}
+          </div>
         </div>
       </section>
 
