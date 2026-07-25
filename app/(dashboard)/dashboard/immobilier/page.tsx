@@ -13,9 +13,10 @@ export default async function ImmobilierPage() {
 
   const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT','MANAGER_IMMOBILIER'].includes(user.role);
   const isProprietaire = user.role === 'PROPRIETAIRE';
+  const canCreate = isAdmin || isProprietaire;
 
   const biens = await prisma.bienImmobilier.findMany({
-    where: isAdmin ? {} : isProprietaire ? { proprietaireId: user.id } : { isActive: true },
+    where: isAdmin ? {} : isProprietaire ? { proprietaireId: user.id } : { isActive: true, isPublished: true },
     orderBy: { createdAt: 'desc' },
     take: 30,
     include: { proprietaire: { select: { name: true } }, _count: { select: { demandesVisite: true } }, },
@@ -44,7 +45,7 @@ export default async function ImmobilierPage() {
               {isAdmin ? 'Gestion de tous les biens' : isProprietaire ? 'Mes biens' : 'Annonces disponibles'}
             </p>
           </div>
-          {(isAdmin || isProprietaire) && (
+          {canCreate && (
             <Link href="/dashboard/immobilier/nouveau" className="bg-[#1a3a5c] text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#0d2440] transition-colors">
               <Plus size={16} /> Ajouter un bien
             </Link>
@@ -102,7 +103,7 @@ export default async function ImmobilierPage() {
           <div className="text-center py-20 text-gray-400">
             <Home size={56} className="mx-auto mb-4 opacity-20" />
             <p className="font-medium">Aucun bien pour le moment</p>
-            {(isAdmin || isProprietaire) && (
+            {canCreate && (
               <Link href="/dashboard/immobilier/nouveau" className="mt-4 inline-block bg-[#1a3a5c] text-white px-6 py-2 rounded-xl text-sm">
                 Ajouter le premier bien
               </Link>

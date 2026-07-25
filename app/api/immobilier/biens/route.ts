@@ -47,12 +47,17 @@ export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
 
+  // Seuls les propriétaires et admins peuvent créer des biens
+  if (!['SUPER_ADMIN', 'ADMIN', 'MANAGER_IMMOBILIER', 'PROPRIETAIRE'].includes(user.role)) {
+    return NextResponse.json({ error: 'Seuls les propriétaires peuvent créer des biens immobiliers' }, { status: 403 });
+  }
+
   const body = await req.json();
   const parsed = bienSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
-  // Admins peuvent publier directement, les autres biens sont en attente de validation
-  const isPublished = ['SUPER_ADMIN', 'ADMIN'].includes(user.role);
+  // Admins peuvent publier directement, les propriétaires doivent être validés
+  const isPublished = ['SUPER_ADMIN', 'ADMIN', 'MANAGER_IMMOBILIER'].includes(user.role);
 
   const bien = await prisma.bienImmobilier.create({
     data: { 

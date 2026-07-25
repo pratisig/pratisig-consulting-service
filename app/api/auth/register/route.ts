@@ -8,6 +8,7 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(100),
   phone: z.string().min(8).max(20).optional(),
+  role: z.enum(['CLIENT', 'PROPRIETAIRE']).optional(),
 });
 
 export async function POST(req: Request) {
@@ -44,8 +45,8 @@ export async function POST(req: Request) {
         email,
         password: hashedPassword,
         phone: phone || null,
-        role: 'CLIENT',
-        status: 'ACTIVE',
+        role: parsed.data.role || 'CLIENT',
+        status: parsed.data.role === 'PROPRIETAIRE' ? 'PENDING' : 'ACTIVE',
       },
       select: {
         id: true,
@@ -108,7 +109,11 @@ export async function POST(req: Request) {
       path: '/',
     });
 
-    return Response.json({ user, message: 'Compte créé avec succès' }, { status: 201 });
+    const message = parsed.data.role === 'PROPRIETAIRE'
+      ? 'Compte créé ! Votre compte propriétaire sera vérifié par un administrateur avant de pouvoir publier des biens.'
+      : 'Compte créé avec succès';
+
+    return Response.json({ user, message }, { status: 201 });
   } catch (error: any) {
     console.error('Register error:', error?.message || error);
     return Response.json(

@@ -69,12 +69,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function register(name: string, email: string, password: string, phone?: string) {
+  async function register(name: string, email: string, password: string, phone?: string, role?: string) {
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, phone }),
+        body: JSON.stringify({ name, email, password, phone, role }),
       });
       const data = await res.json();
       if (!res.ok) return { error: data.error || 'Erreur d\'inscription' };

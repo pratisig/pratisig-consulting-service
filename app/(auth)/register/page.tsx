@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [accountType, setAccountType] = useState<'CLIENT' | 'PROPRIETAIRE'>('CLIENT');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -31,7 +32,7 @@ export default function RegisterPage() {
     }
 
     setLoading(true);
-    const result = await register(name, email, password, phone || undefined);
+    const result = await register(name, email, password, phone || undefined, accountType);
     setLoading(false);
 
     if (result.error) {
@@ -137,6 +138,44 @@ export default function RegisterPage() {
                   placeholder="Confirmez le mot de passe"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Type de compte</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setAccountType('CLIENT')}
+                  className={`p-4 rounded-xl border-2 transition-all text-center ${
+                    accountType === 'CLIENT'
+                      ? 'border-[#1a3a5c] bg-[#1a3a5c]/5'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="text-2xl mb-1"></div>
+                  <p className="font-semibold text-sm text-[#1a3a5c]">Client</p>
+                  <p className="text-xs text-gray-500 mt-1">Acheter, louer, commander</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAccountType('PROPRIETAIRE')}
+                  className={`p-4 rounded-xl border-2 transition-all text-center ${
+                    accountType === 'PROPRIETAIRE'
+                      ? 'border-[#e8a020] bg-[#e8a020]/5'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="text-2xl mb-1"></div>
+                  <p className="font-semibold text-sm text-[#1a3a5c]">Propriétaire</p>
+                  <p className="text-xs text-gray-500 mt-1">Publier des biens immobiliers</p>
+                </button>
+              </div>
+              {accountType === 'PROPRIETAIRE' && (
+                <p className="text-xs text-[#e8a020] mt-2 flex items-center gap-1">
+                  <Shield size={12} />
+                  Votre compte sera vérifié avant de pouvoir publier des biens
+                </p>
+              )}
             </div>
 
             <button
