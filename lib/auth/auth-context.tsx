@@ -17,7 +17,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ error?: string }>;
-  register: (name: string, email: string, password: string, phone?: string) => Promise<{ error?: string }>;
+  register: (name: string, email: string, password: string, phone?: string, role?: string) => Promise<{ error?: string }>;
   logout: () => Promise<void>;
   hasPermission: (permission: Permission) => boolean;
 }
