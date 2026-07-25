@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft, MapPin, Package, Clock, User, Phone, Navigation } from 'lucide-react';
 import LivraisonMap from '@/components/livraison/LivraisonMap';
 import StatutModifier from '@/components/livraison/StatutModifier';
+import AssignerLivreur from '@/components/livraison/AssignerLivreur';
 import { getCurrentUser } from '@/lib/auth/session';
 
 export default async function LivraisonDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -174,7 +175,15 @@ export default async function LivraisonDetailPage({ params }: { params: Promise<
           </div>
         </div>
 
-        {/* Modifier le statut (pour admins et livreurs) */}
+        {/* Assigner un livreur (pour admins et managers) */}
+        {(user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role === 'MANAGER_LIVRAISON') && (
+          <AssignerLivreur
+            livraisonId={livraison.id}
+            livreurActuelId={livraison.livreurId}
+          />
+        )}
+
+        {/* Modifier le statut (pour admins, managers et livreurs) */}
         {(user.role === 'SUPER_ADMIN' || user.role === 'ADMIN' || user.role === 'MANAGER_LIVRAISON' || user.role === 'LIVREUR') && (
           <StatutModifier
             livraisonId={livraison.id}
