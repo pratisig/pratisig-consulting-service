@@ -1,16 +1,16 @@
 import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus, TrendingUp } from 'lucide-react';
 
-
 const SERVICES_TRANSFERT = [
-  { id: 'WAVE', nom: 'Wave', couleur: '#1B9BF0', emoji: '🌊', description: 'Transfert Wave Sénégal' },
-  { id: 'ORANGE_MONEY', nom: 'Orange Money', couleur: '#FF6600', emoji: '🟠', description: 'Orange Money' },
-  { id: 'YASH_MONEY', nom: 'Yash Money', couleur: '#8B0000', emoji: '💳', description: 'Yash Money' },
-  { id: 'KAPEY', nom: 'Kapey', couleur: '#006400', emoji: '💚', description: 'Kapey' },
-  { id: 'FREE_MONEY', nom: 'Free Money', couleur: '#CC0000', emoji: '📲', description: 'Free Money' },
-  { id: 'EMONEY', nom: 'E-Money', couleur: '#4B0082', emoji: '💜', description: 'E-Money' },
+  { id: 'WAVE', nom: 'Wave', couleur: '#1B9BF0', logo: '/logos/transfert/wave.png', description: 'Transfert Wave Sénégal' },
+  { id: 'ORANGE_MONEY', nom: 'Orange Money', couleur: '#FF6600', logo: '/logos/transfert/orange-money.png', description: 'Orange Money' },
+  { id: 'YASH_MONEY', nom: 'Yash Money', couleur: '#8B0000', logo: '/logos/transfert/yash-money.png', description: 'Yash Money' },
+  { id: 'KAPEY', nom: 'Kapey', couleur: '#006400', logo: '/logos/transfert/kpay.png', description: 'Kapey' },
+  { id: 'FREE_MONEY', nom: 'Free Money', couleur: '#CC0000', logo: '/logos/transfert/free-money.png', description: 'Free Money' },
+  { id: 'EMONEY', nom: 'E-Money', couleur: '#4B0082', logo: '/logos/transfert/emoney.png', description: 'E-Money' },
 ];
 
 export default async function TransfertPage() {
@@ -45,7 +45,15 @@ export default async function TransfertPage() {
               href="/dashboard/transfert/nouvelle"
               className="bg-white border-2 border-slate-100 rounded-2xl p-6 hover:shadow-lg transition-all hover:border-[#1a3a5c] text-center group"
             >
-              <div className="text-5xl mb-3">{s.emoji}</div>
+              <div className="h-16 mb-3 flex items-center justify-center">
+                <Image
+                  src={s.logo}
+                  alt={s.nom}
+                  width={64}
+                  height={64}
+                  className="object-contain"
+                />
+              </div>
               <p className="font-bold text-lg" style={{ color: s.couleur }}>{s.nom}</p>
               <p className="text-gray-400 text-xs mt-1">{s.description}</p>
               <div
