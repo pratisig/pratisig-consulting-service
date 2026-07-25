@@ -3,9 +3,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { useRouter } from 'next/navigation';
-import { Search, Users, ChevronLeft, ChevronRight, Shield, Edit3, Trash2, Ban, Check, Loader2, X } from 'lucide-react';
+import { Search, Users, ChevronLeft, ChevronRight, Shield, Edit3, Trash2, Ban, Check, Loader2, X, UserPlus } from 'lucide-react';
 import { ROLE_LABELS, ROLE_HIERARCHY, canManageRole, PERMISSION_LABELS } from '@/lib/auth/permissions';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import type { Role, Permission, UserStatus } from '@prisma/client';
 
 interface UserListItem {
@@ -34,6 +35,16 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [editUser, setEditUser] = useState<UserListItem | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    role: 'CLIENT' as Role,
+    status: 'ACTIVE' as UserStatus,
+  });
+  const [creatingUser, setCreatingUser] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -124,6 +135,29 @@ export default function UsersPage() {
     return canManageRole(currentUser.role as Role, targetRole as Role);
   };
 
+  async function handleCreateUser(e: React.FormEvent) {
+    e.preventDefault();
+    setCreatingUser(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur');
+      
+      toast.success('Utilisateur créé avec succès !');
+      setShowAddUser(false);
+      setNewUser({ name: '', email: '', phone: '', password: '', role: 'CLIENT' as Role, status: 'ACTIVE' as UserStatus });
+      fetchUsers();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setCreatingUser(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -131,6 +165,15 @@ export default function UsersPage() {
           <h1 className="text-2xl font-bold text-[#1a3a5c]">Gestion des utilisateurs</h1>
           <p className="text-gray-500 text-sm mt-1">{total} utilisateur{total > 1 ? 's' : ''} au total</p>
         </div>
+        {currentUser?.role === 'SUPER_ADMIN' && (
+          <button
+            onClick={() => setShowAddUser(true)}
+            className="bg-[#1a3a5c] text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#0d2440] transition-colors"
+          >
+            <UserPlus size={16} />
+            Ajouter un utilisateur
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -356,6 +399,115 @@ export default function UsersPage() {
                 Supprimer
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add User Modal */}
+      {showAddUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg text-[#1a3a5c]">Ajouter un utilisateur</h3>
+              <button onClick={() => setShowAddUser(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nom complet *</label>
+                <input
+                  type="text"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  required
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+                  placeholder="Jean Dupont"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <input
+                  type="email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  required
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+                  placeholder="jean@example.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                <input
+                  type="tel"
+                  value={newUser.phone}
+                  onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+                  placeholder="+221 77 123 45 67"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                <input
+                  type="password"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+                  placeholder="Laisser vide pour utiliser 'password123'"
+                />
+                <p className="text-xs text-gray-500 mt-1">Par défaut: password123</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
+                <select
+                  value={newUser.role}
+                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value as Role })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+                >
+                  {ROLE_HIERARCHY.map((role) => (
+                    <option key={role} value={role}>
+                      {ROLE_LABELS[role]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                <select
+                  value={newUser.status}
+                  onChange={(e) => setNewUser({ ...newUser, status: e.target.value as UserStatus })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
+                >
+                  <option value="ACTIVE">Actif</option>
+                  <option value="PENDING">En attente</option>
+                  <option value="SUSPENDED">Suspendu</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddUser(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingUser}
+                  className="flex-1 px-4 py-2 bg-[#1a3a5c] text-white rounded-xl text-sm font-medium hover:bg-[#0d2440] disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {creatingUser ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
+                  {creatingUser ? 'Création...' : 'Créer'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
