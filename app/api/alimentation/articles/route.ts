@@ -38,13 +38,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Nom et prix requis' }, { status: 400 });
     }
 
+    // Valider le categorieId - doit être un UUID valide ou null
+    let validCategorieId: string | null = null;
+    if (categorieId) {
+      // Vérifier que c'est un UUID valide (format standard)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (uuidRegex.test(categorieId)) {
+        // Vérifier que la catégorie existe
+        const categorie = await prisma.categorieAlimentation.findUnique({
+          where: { id: categorieId },
+        });
+        if (categorie) {
+          validCategorieId = categorieId;
+        }
+      }
+      // Si ce n'est pas un UUID valide, on ignore la catégorie
+    }
+
     const article = await prisma.articleAlimentation.create({
       data: {
         nom,
         prix: parseFloat(prix),
         stock: parseInt(stock) || 0,
         unite: unite || 'unité',
-        categorieId: categorieId || null,
+        categorieId: validCategorieId,
         isActive: true,
       },
     });

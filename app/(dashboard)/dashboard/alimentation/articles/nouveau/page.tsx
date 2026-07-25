@@ -1,14 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
+interface Categorie {
+  id: string;
+  nom: string;
+}
+
 export default function NouvelArticlePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<Categorie[]>([]);
   const [form, setForm] = useState({
     nom: '',
     prix: '',
@@ -16,6 +22,14 @@ export default function NouvelArticlePage() {
     unite: 'unité',
     categorieId: '',
   });
+
+  useEffect(() => {
+    // Charger les catégories depuis l'API
+    fetch('/api/alimentation/categories')
+      .then(res => res.json())
+      .then(data => setCategories(data))
+      .catch(err => console.error('Erreur chargement catégories:', err));
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -126,12 +140,13 @@ export default function NouvelArticlePage() {
                 className="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
               >
                 <option value="">Aucune catégorie</option>
-                <option value="epicerie">Épicerie</option>
-                <option value="boissons">Boissons</option>
-                <option value="hygiene">Hygiène</option>
-                <option value="frais">Produits frais</option>
-                <option value="surgelés">Surgelés</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.nom}</option>
+                ))}
               </select>
+              {categories.length === 0 && (
+                <p className="text-xs text-gray-400 mt-1">Aucune catégorie disponible</p>
+              )}
             </div>
           </div>
 
