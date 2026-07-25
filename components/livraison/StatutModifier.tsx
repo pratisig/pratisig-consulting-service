@@ -12,13 +12,13 @@ interface StatutModifierProps {
 }
 
 const STATUTS_POSSIBLES = [
-  { value: 'EN_ATTENTE', label: 'En attente', color: 'bg-yellow-500' },
-  { value: 'ACCEPTEE', label: 'Acceptée', color: 'bg-blue-500' },
-  { value: 'EN_ROUTE_COLLECTE', label: 'En route collecte', color: 'bg-indigo-500' },
-  { value: 'COLLECTE', label: 'Colis collecté', color: 'bg-purple-500' },
-  { value: 'EN_ROUTE_LIVRAISON', label: 'En route livraison', color: 'bg-orange-500' },
-  { value: 'LIVREE', label: 'Livrée', color: 'bg-green-500' },
-  { value: 'ANNULEE', label: 'Annulée', color: 'bg-red-500' },
+  { value: 'EN_ATTENTE', label: 'En attente' },
+  { value: 'ACCEPTEE', label: 'Acceptée' },
+  { value: 'EN_ROUTE_COLLECTE', label: 'En route collecte' },
+  { value: 'COLLECTE', label: 'Colis collecté' },
+  { value: 'EN_ROUTE_LIVRAISON', label: 'En route livraison' },
+  { value: 'LIVREE', label: 'Livrée' },
+  { value: 'ANNULEE', label: 'Annulée' },
 ];
 
 export default function StatutModifier({ livraisonId, statutActuel, userRole }: StatutModifierProps) {
@@ -52,25 +52,6 @@ export default function StatutModifier({ livraisonId, statutActuel, userRole }: 
     }
   };
 
-  // Déterminer les statuts disponibles selon le rôle
-  const getStatutsDisponibles = () => {
-    if (userRole === 'LIVREUR') {
-      return STATUTS_POSSIBLES.filter(s => 
-        ['ACCEPTEE', 'EN_ROUTE_COLLECTE', 'COLLECTE', 'EN_ROUTE_LIVRAISON', 'LIVREE'].includes(s.value)
-      );
-    }
-    if (['SUPER_ADMIN', 'ADMIN', 'MANAGER_LIVRAISON'].includes(userRole)) {
-      return STATUTS_POSSIBLES;
-    }
-    return [];
-  };
-
-  const statutsDisponibles = getStatutsDisponibles();
-
-  if (statutsDisponibles.length === 0) {
-    return null;
-  }
-
   return (
     <div className="bg-white rounded-2xl shadow p-6">
       <h3 className="font-bold text-[#1a3a5c] mb-4 flex items-center gap-2">
@@ -83,7 +64,7 @@ export default function StatutModifier({ livraisonId, statutActuel, userRole }: 
           onChange={(e) => setNouveauStatut(e.target.value)}
           className="w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1a3a5c]"
         >
-          {statutsDisponibles.map((statut) => (
+          {STATUTS_POSSIBLES.map((statut) => (
             <option key={statut.value} value={statut.value}>
               {statut.label}
             </option>
