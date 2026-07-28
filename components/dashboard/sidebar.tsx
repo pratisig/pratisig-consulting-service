@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/auth-context';
 import {
   LayoutDashboard, Users, Shield, Activity, Building2, ShoppingBag,
-  Truck, Wallet, UtensilsCrossed, Settings, LogOut, ChevronDown, FileCheck, User, Trash2, TrendingUp, Tag, FileText, UserCheck
+  Truck, Wallet, UtensilsCrossed, Settings, LogOut, ChevronDown, FileCheck, User, Trash2, TrendingUp, Tag, FileText, UserCheck, DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ROLE_LABELS } from '@/lib/auth/permissions';
@@ -19,6 +19,7 @@ const navItems = [
   { href: '/admin/proprietaires', label: 'Validation Propriétaires', icon: UserCheck, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/immobilier', label: 'Validation biens', icon: FileCheck, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/immobilier/stats', label: 'Stats Immobilier', icon: TrendingUp, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER_IMMOBILIER'] },
+  { href: '/admin/commissions', label: 'Commissions', icon: DollarSign, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/ecommerce', label: 'E-commerce Admin', icon: ShoppingBag, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER_ECOMMERCE'] },
   { href: '/admin/promos', label: 'Codes Promo', icon: Tag, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/facture/config', label: 'Config. Factures', icon: FileText, roles: ['SUPER_ADMIN'] },
