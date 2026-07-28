@@ -190,6 +190,7 @@ model User {
   livraisonsClient Livraison[]        @relation("ClientLivraison")
   livraisonsLivreur Livraison[]       @relation("LivreurLivraison")
   biensProprietaire BienImmobilier[]  @relation("ProprietaireBien")
+  commissions     Commission[]
   auditLogs       AuditLog[]
   caissesOuvertes CaisseSession[]     @relation("CaissierSession")
 
@@ -467,6 +468,7 @@ model BienImmobilier {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   demandesVisite DemandeVisite[]
+  commissions    Commission[]
 
   @@index([proprietaireId])
   @@index([statut])
@@ -487,6 +489,30 @@ model DemandeVisite {
   createdAt DateTime @default(now())
 
   @@index([bienId])
+}
+
+// ─── COMMISSIONS ──────────────────────────────────────────────────────────────
+
+model Commission {
+  id              String   @id @default(cuid())
+  bienId          String?
+  bien            BienImmobilier? @relation(fields: [bienId], references: [id], onDelete: SetNull)
+  transactionType String   // VENTE, LOCATION
+  montantBase     Float    // Montant de la transaction
+  tauxCommission  Float    // Taux en pourcentage (ex: 5 pour 5%)
+  montantCommission Float  // Montant calculé
+  statut          String   @default("EN_ATTENTE") // EN_ATTENTE, PAYEE, ANNULEE
+  proprietaireId  String
+  proprietaire    User     @relation(fields: [proprietaireId], references: [id])
+  dateTransaction DateTime @default(now())
+  datePaiement    DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([proprietaireId])
+  @@index([statut])
+  @@index([dateTransaction])
 }
 
 // ─── SÉCURITÉ & AUDIT ────────────────────────────────────────────────────────

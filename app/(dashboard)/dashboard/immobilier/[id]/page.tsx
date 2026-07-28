@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, BedDouble, Bath, Maximize2, Phone, Mail, Calendar, Edit3, Trash2, Eye } from 'lucide-react';
+import { ArrowLeft, MapPin, BedDouble, Bath, Maximize2, Phone, Mail, Calendar, Edit3, Trash2, Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
+import PublicationActions from './PublicationActions';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +25,7 @@ export default async function DetailBienPage({ params }: { params: Promise<{ id:
   const isOwner = bien.proprietaireId === user.id;
   const isAdmin = ['ADMIN','SUPER_ADMIN','GERANT','MANAGER_IMMOBILIER'].includes(user.role);
   const canEdit = isOwner || isAdmin;
+  const canPublish = isAdmin; // Seuls les admins peuvent publier/dépublier
 
   const STATUT_COLORS: Record<string,string> = {
     DISPONIBLE: 'bg-green-100 text-green-700',
@@ -151,6 +153,11 @@ export default async function DetailBienPage({ params }: { params: Promise<{ id:
 
           {/* Sidebar contact */}
           <div className="space-y-4">
+            {/* Actions de publication (admin uniquement) */}
+            {canPublish && (
+              <PublicationActions bienId={bien.id} isPublished={bien.isPublished} />
+            )}
+
             {/* Propriétaire */}
             <div className="bg-white rounded-2xl shadow p-5">
               <h3 className="font-bold text-[#1a3a5c] mb-3 text-sm">Contact propriétaire</h3>

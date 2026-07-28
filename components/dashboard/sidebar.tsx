@@ -18,6 +18,7 @@ const navItems = [
   { href: '/admin/utilisateurs', label: 'Utilisateurs', icon: Users, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/proprietaires', label: 'Validation Propriétaires', icon: UserCheck, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/immobilier', label: 'Validation biens', icon: FileCheck, roles: ['SUPER_ADMIN', 'ADMIN'] },
+  { href: '/admin/immobilier/stats', label: 'Stats Immobilier', icon: TrendingUp, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER_IMMOBILIER'] },
   { href: '/admin/ecommerce', label: 'E-commerce Admin', icon: ShoppingBag, roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER_ECOMMERCE'] },
   { href: '/admin/promos', label: 'Codes Promo', icon: Tag, roles: ['SUPER_ADMIN', 'ADMIN'] },
   { href: '/admin/facture/config', label: 'Config. Factures', icon: FileText, roles: ['SUPER_ADMIN'] },
