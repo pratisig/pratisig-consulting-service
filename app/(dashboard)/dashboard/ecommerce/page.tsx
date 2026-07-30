@@ -4,7 +4,6 @@ import { prisma } from '@/lib/db/prisma';
 
 import Link from 'next/link';
 import { Package, ShoppingBag, Plus, Eye, TrendingUp, Edit3 } from 'lucide-react';
-import GenerateFacture from '@/components/facture/GenerateFacture';
 
 export const dynamic = 'force-dynamic';
 
@@ -90,9 +89,9 @@ export default async function EcommerceDashboardPage() {
           <div className="flex items-center gap-2">
             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUT_COLORS[cmd.statut] ?? 'bg-gray-100'}`}>{cmd.statut.replace('_',' ')}</span>
             <span className="font-bold text-[#e8a020] text-sm">{cmd.total.toLocaleString('fr-FR')} F</span>
-            {['SUPER_ADMIN', 'ADMIN', 'MANAGER_ECOMMERCE'].includes(user?.role || '') && cmd.statut === 'LIVREE' && (
-              <GenerateFacture commandeId={cmd.id} />
-            )}
+            <Link href={`/dashboard/ecommerce/commandes/${cmd.id}`} className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors" title="Voir détails">
+              <Eye size={14} />
+            </Link>
           </div>
                 </div>
               ))}

@@ -160,7 +160,7 @@ export default async function CommandeDetailPage({ params }: { params: Promise<{
                 <FileText size={18} /> Actions
               </h2>
               {commande.statut === 'LIVREE' && (
-                <GenerateFacture commandeId={commande.id} />
+                <GenerateFacture commande={commande as any} />
               )}
               <p className="text-xs text-gray-500">
                 La facture est disponible une fois la commande livrée.
